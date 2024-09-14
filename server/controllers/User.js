@@ -6,6 +6,7 @@ import User from '../models/User.js';
 dotenv.config();
 const secret = process.env.JWT_SECRET;
 
+// Traditional login
 export const loginUser = async (req, res) => {
     const {username, password} = req.body;
 
@@ -29,6 +30,7 @@ export const loginUser = async (req, res) => {
     }
 };
 
+// Traditional register
 export const registerUser = async (req, res) => {
     const {username, email, password} = req.body;
 
@@ -43,7 +45,8 @@ export const registerUser = async (req, res) => {
         const user = new User({
             username,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            provider: 'local',
         });
         console.log(`New user acc: ${user}`);
         await user.save();
@@ -51,5 +54,40 @@ export const registerUser = async (req, res) => {
     } catch (error) {
         console.error('Error registering user:', error);
         res.status(500).send('Error registering user!');
+    }
+};
+
+// Social login
+export const socialLogin = async (req, res) => {
+    const {username, email, uid, provider} = req.body;
+
+    // Check if essential fields are missing
+    if(!email || !uid || !provider){
+        return res.status(400).send('Missing required fields for social login');
+    }
+
+    // Proceed with finding or creating user based on social login data
+    try {
+        let user = await User.findOne({ uid, provider });
+
+        if (!user) {
+            // Check for existing email registration in another provider to prevent conflicts
+            const emailExists = await User.findOne({ email });
+            if (emailExists) {
+                return res.status(400).send('Email already used by another account!');
+            }
+
+            // Register new user
+            user = new User({ username, email, uid, provider });
+            console.log(user);
+            await user.save();
+            console.log(`Save user: ${user} to DB!`);
+        }
+
+        const token = jwt.sign({ userId: user._id }, secret, { expiresIn: '1h' });
+        res.status(200).send({ token, user, message: 'Social login successful!' });
+    } catch (error) {
+        console.error("Error: ", error);
+        res.status(500).send('Error login user!');
     }
 };

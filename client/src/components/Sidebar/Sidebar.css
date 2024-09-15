@@ -1,0 +1,175 @@
+/* Sidebar.css */
+
+/* General Styling */
+.sidebar-header {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #ccc;
+}
+
+.sidebar-header svg {
+    margin-top: 5px;
+    margin-left: 10px;
+}
+
+.sidebar-appname {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 0;
+    margin-right: 20px;
+}
+
+.sidebar-main h1 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+/* Navigation Link Styling */
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 16px;
+    color: #333;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+    border-radius: 6px;
+    /* Slight rounding for nav items */
+}
+
+.nav-link:hover {
+    background-color: #67c8d5;
+    /* Light hover background color */
+    color: #007bff;
+}
+
+.nav-link p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.nav-link svg {
+    margin-right: 10px;
+}
+
+/* Footer Logout Button */
+.sidebar-footer {
+    margin-top: auto;
+}
+
+.sidebar-footer .btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    font-size: 16px;
+    padding: 10px;
+}
+
+.sidebar-footer .btn svg {
+    vertical-align: middle;
+    /* Ensure the icon is vertically aligned */
+}
+
+.sidebar-footer p {
+    margin-left: 10px;
+    margin-bottom: 0;
+    font-size: 16px;
+    vertical-align: middle;
+    /* Ensure text is aligned with the icon */
+    text-align: center;
+}
+
+/* Collapsed Sidebar Styling */
+.collapsed {
+    width: 60px;
+    transition: width 0.3s ease-in-out;
+    /* Smooth transition for sidebar width */
+}
+
+.collapsed .sidebar-header p,
+.collapsed .nav-link p,
+.collapsed .sidebar-footer p {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out, transform 0.3s ease-in-out;
+    /* Smooth fade-out and slide */
+    transform: translateX(-20px);
+    /* Slide text out smoothly */
+    display: none;
+    /* Hide all text after transition */
+}
+
+.collapsed .nav-link svg {
+    margin-right: 0;
+    font-size: 20px;
+    /* Slightly reduce icon size when collapsed */
+    transition: font-size 0.3s ease-in-out, margin-right 0.3s ease-in-out;
+}
+
+.collapsed .sidebar-header svg {
+    transform: rotate(360deg);
+    /* Rotate the icon on collapse */
+    transition: transform 0.3s ease-in-out;
+    /* Smooth icon rotation */
+}
+
+.collapsed .sidebar-footer .btn svg {
+    transform: rotate(360deg);
+    /* Rotate logout icon as well */
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+
+    .sidebar-header,
+    .sidebar-main,
+    .sidebar-footer {
+        text-align: center;
+    }
+
+    .sidebar-header {
+        justify-content: center;
+    }
+
+    .nav-link {
+        justify-content: center;
+        padding: 15px 0;
+    }
+
+    .nav-link p {
+        display: none;
+        /* Hide text on smaller screens */
+    }
+
+    .nav-link svg {
+        margin-right: 0;
+        font-size: 24px;
+        /* Enlarge icons for mobile */
+    }
+
+    .sidebar-footer .btn {
+        justify-content: center;
+    }
+
+    .sidebar-header p {
+        display: none;
+    }
+
+    .sidebar-footer p {
+        display: none;
+        /* Hide logout text */
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .nav-link p {
+        font-size: 14px;
+    }
+
+    .sidebar-main h1 {
+        font-size: 18px;
+    }
+}

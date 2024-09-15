@@ -57,7 +57,7 @@ export default function LoginAndRegister({ setIsAuth, setUser }) {
             localStorage.setItem('user', JSON.stringify(res.data.user));
             setUser(res.data.user);
             setIsAuth(true);
-            navigate('/home');
+            navigate('/home-page');
             console.log('Login successfully!');
         } catch (error) {
             console.error('Error login: ', error);
@@ -85,7 +85,7 @@ export default function LoginAndRegister({ setIsAuth, setUser }) {
             localStorage.setItem('user', JSON.stringify(res.data.user));
             setUser(res.data.user);
             setIsAuth(true);
-            navigate('/home');
+            navigate('/home-page');
         } catch (error) {
             console.error('Error during Google sign-in:', error);
             alert('Google login failed!');

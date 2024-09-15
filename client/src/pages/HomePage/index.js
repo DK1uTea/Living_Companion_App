@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import './Home.css';
+import './HomePage.css';
 import Carousels_Feature from '../../components/Carousels_Features';
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div className='home-container'>
       <Carousels_Feature />

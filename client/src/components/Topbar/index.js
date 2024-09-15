@@ -7,7 +7,7 @@ export default function Topbar() {
     <div>
       <ul>
         <li>
-          <Link to='/user/login-and-register'>Home</Link>
+          <Link to='/login-and-register'>Home</Link>
         </li>
         {/* <li>
           <Link to='/user/register'>Register</Link>

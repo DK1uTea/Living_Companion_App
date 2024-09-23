@@ -8,6 +8,7 @@ import HomePage from "./pages/HomePage";
 import TodoPage from "./pages/TodoPage";
 import HabitPage from "./pages/HabitPage";
 import ConsumptionPage from "./pages/ConsumptionPage";
+import { jwtDecode } from "jwt-decode";
 
 
 function App() {
@@ -33,8 +34,8 @@ function App() {
               {/* Sidebar */}
               <Col xs={isCollapsed ? 1 : 3} md={isCollapsed ? 1 : 2} className="p-0" style={{
                 border: "2px solid #333", 
-                borderTopRightRadius: "25px", 
-                borderBottomRightRadius: "25px", 
+                borderTopRightRadius: "20px", 
+                borderBottomRightRadius: "20px", 
                 padding: "10px",
                 backgroundColor: "linear-gradient(to right, #1f4037, #99f2c8);"}}
               >

@@ -84,7 +84,6 @@
 
 /* Collapsed Sidebar Styling */
 .collapsed {
-    width: 60px;
     transition: width 0.3s ease-in-out;
     /* Smooth transition for sidebar width */
 }

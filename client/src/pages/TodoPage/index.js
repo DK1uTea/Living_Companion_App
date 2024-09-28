@@ -10,16 +10,18 @@ export default function TodoPage() {
   const [todoList, setTodoList] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [dueDate, setDueDate] = useState(null);
+  const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState('');
+  const [taskIdToEdit, setTaskIdToEdit] = useState(null);
 
+  // Fetch all tasks of user
   const fetchTasks = async () => {
     const userID = getUserIdFromLocalStorage();
     if (!userID) return; 
 
     try {
       const res = await axios.get(`http://localhost:3001/api/getTasks/${userID}`);
-      setTodoList(res.data);
+      setTodoList(res.data.reverse());
     } catch (error) {
       console.error(error);
     }
@@ -29,6 +31,7 @@ export default function TodoPage() {
     fetchTasks();
   }, []);
 
+  // Get user id from local storage
   const getUserIdFromLocalStorage = () => {   
     try {
       const user = JSON.parse(localStorage.getItem('user'));     
@@ -40,6 +43,7 @@ export default function TodoPage() {
     }
   };
 
+  // Handle Add Task
   const handleAddTask = async (e) => {
     e.preventDefault();
 
@@ -68,8 +72,85 @@ export default function TodoPage() {
     handleClose();
   };
 
-  const handleShow = () => setShow(true);
-  const handleClose = () => setShow(false);
+  // Handle Delete Task
+  const handleDeleteTask = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3001/api/deleteTask/${id}`);
+      setTodoList(todoList.filter((task) => task._id !== id));
+      console.log('Delete task successfully!');
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Handle Edit Task
+  const handleEditTask = async (e) => {
+    e.preventDefault();
+    const taskDueDate = new Date(dueDate);
+
+    const reqData = {
+      title,
+      description,
+      dueDate: taskDueDate,
+      priority: priority.toLowerCase(),
+    };
+
+    console.log(reqData);
+
+    try {
+      const res = await axios.put(`http://localhost:3001/api/editTask/${taskIdToEdit}`, reqData);
+      const updatedTask = res.data.updatedTask;
+      console.log(updatedTask);
+      // Update the specific task in the todoList using map
+      setTodoList((prevTodoList) =>
+        prevTodoList.map((task) =>
+          task._id === updatedTask._id ? updatedTask : task
+        )
+      );
+      console.log('Updated task succesfully');
+    } catch (error) {
+      console.error(error);
+    }
+
+    handleClose(); // clode modal
+  };
+
+  const handleShow = () => setShow(true); // handle show modal
+  const handleClose = () => { // handle close modal
+    setShow(false);
+    setTaskIdToEdit(null);
+    setTitle('');
+    setDescription('');
+    setDueDate(null);
+    setPriority('');
+  };
+
+  // Open modal for editing task
+  const handleOpenEditModal = (task) => {
+    setTaskIdToEdit(task._id);
+    setTitle(task.title);
+    setDescription(task.description);
+    setDueDate(task.dueDate ? task.dueDate.split('T')[0] : null);
+    setPriority(task.priority);
+    setShow(true);
+  };
+
+  // Handle Mark task as completed
+  const handleMarkTaskAsCompleted = async (id) => {
+    try {
+      const res = await axios.put(`http://localhost:3001/api/markTaskAsCompleted/${id}`);
+      const taskCompleted = res.data.task;
+      // Update the specific task in the todoList using map
+      setTodoList((prevTodoList) =>
+        prevTodoList.map((task) =>
+          task._id === taskCompleted._id ? taskCompleted : task
+        )
+      );
+      console.log('Task has been marked as completed!');
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <div style={{ padding: "20px" }}>
@@ -84,7 +165,9 @@ export default function TodoPage() {
       {/* Modal with the form inside */}
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
-          <Form onSubmit={handleAddTask} style={{ border: '1px solid black', padding: '10px', borderRadius: '10px' }}>
+          <Form onSubmit={taskIdToEdit ? handleEditTask : handleAddTask} 
+                style={{ border: '1px solid black', padding: '10px', borderRadius: '10px' }}
+          >
             <Row className='mb-3'>
               <Form.Group as={Col}>
                 <Form.Label>Task title:</Form.Label>
@@ -130,7 +213,7 @@ export default function TodoPage() {
                 </Dropdown>
               </Form.Group>
             </Row>
-            <Button type='submit'>Add Task</Button>
+            <Button type='submit'>{taskIdToEdit ? 'Update Task' : 'Add Task'}</Button>
           </Form>
         </Modal.Body>
       </Modal>
@@ -140,7 +223,12 @@ export default function TodoPage() {
         <Row>
           {todoList.map((task) => (
             <Col key={task._id} xs={12} sm={6} md={4} lg={3} className="mb-4">
-              <Task task={task} />
+              <Task 
+                task={task} 
+                handleDeleteTask={handleDeleteTask} 
+                handleOpenEditModal={handleOpenEditModal} 
+                handleMarkTaskAsCompleted={handleMarkTaskAsCompleted}
+              />
             </Col>
           ))}
         </Row>

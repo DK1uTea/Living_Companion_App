@@ -28,6 +28,9 @@ const taskSchema = new mongoose.Schema({
         enum: ['pending', 'completed', 'overdue'],
         default: 'pending',
     },
+    completedDate: {
+        type: Date,
+    },
     createdAt: {
         type: Date,
         default: Date.now,

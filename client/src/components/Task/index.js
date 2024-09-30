@@ -20,6 +20,9 @@ export default function Task({ task, handleDeleteTask, handleOpenEditModal, hand
         }
     };
 
+    // Apply the background color to ListGroup.Item as well
+    const listItemStyle = getStatusStyle();
+
     return (
         <Card style={{ width: '18rem', ...getStatusStyle() }}>            
             <Card.Body>
@@ -36,9 +39,9 @@ export default function Task({ task, handleDeleteTask, handleOpenEditModal, hand
                     {task.description.length > 30 ? `${task.description.slice(0, 30)}...` : task.description}
                 </Card.Text>
                 <ListGroup className="list-group-flush" >
-                    <ListGroup.Item><strong>Due Date: </strong>{formattedDate}</ListGroup.Item>
-                    <ListGroup.Item><strong>Priority: </strong>{task.priority}</ListGroup.Item>
-                    <ListGroup.Item><strong>Status: </strong>{task.status}</ListGroup.Item>
+                    <ListGroup.Item style={listItemStyle} ><strong>Due Date: </strong>{formattedDate}</ListGroup.Item>
+                    <ListGroup.Item style={listItemStyle} ><strong>Priority: </strong>{task.priority}</ListGroup.Item>
+                    <ListGroup.Item style={listItemStyle} ><strong>Status: </strong>{task.status}</ListGroup.Item>
                 </ListGroup>
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid black', paddingTop: '5px' }}>
                     <Button 

@@ -37,7 +37,7 @@ function App() {
                 borderTopRightRadius: "20px", 
                 borderBottomRightRadius: "20px", 
                 padding: "10px",
-                backgroundColor: "linear-gradient(to right, #1f4037, #99f2c8);"}}
+                backgroundColor: "linear-gradient(to right, #1f4037, #99f2c8)"}}
               >
                 <Sidebar user={user} setIsAuth={setIsAuth} setUser={setUser} isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
               </Col>

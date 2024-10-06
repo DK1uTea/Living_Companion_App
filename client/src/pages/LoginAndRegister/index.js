@@ -135,12 +135,13 @@ export default function LoginAndRegister({ setIsAuth, setUser }) {
                         <div className="social-container">
                             <FontAwesomeIcon
                                 icon={faGoogle}
+                                flip
                                 style={{
-                                    border: '2px solid #000', // Set the color of the circle border
+                                    border: '2px solid #B197FC', // Set the color of the circle border
                                     borderRadius: '50%',         // Make the border circular
                                     padding: '10px',             // Add padding to space the icon within the circle
                                     fontSize: '20px',            // Adjust the size of the icon
-                                    color: '#000',            // Set the color of the Google icon
+                                    color: '#B197FC',            // Set the color of the Google icon
                                     cursor: 'pointer',           // Add pointer cursor effect on hover
                                     transition: '0.3s',          // Smooth transition for hover effects
                                 }}
@@ -162,7 +163,6 @@ export default function LoginAndRegister({ setIsAuth, setUser }) {
                             value={passwordLogin}
                             onChange={(e) => setPasswordLogin(e.target.value)}
                         />
-                        <a href="#">Forgot your password?</a>
                         <button type='submit'>Sign In</button>
                     </form>
                 </div>

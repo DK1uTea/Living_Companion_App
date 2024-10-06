@@ -1,0 +1,42 @@
+/* General css*/
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #e4f4fa;
+}
+
+.top-bar {
+    background-color: #035ab8 !important; /* Blue background */
+    color: #ffffff; /* White text */
+    padding: 10px 15px;
+    width: 100%;
+    height: 66px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    border-bottom: 2px solid rgb(173, 168, 168);
+    z-index: 2;
+    background-color: #fff;
+    position: sticky;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.icon-open-menu {
+    display: flex;
+    align-items: center;
+}
+
+.icon-open-menu svg {
+    width: 25px;
+    height: 25px;
+}
+
+.icon-open-menu:hover {
+    opacity: 0.6;
+}
+
+.app-name-title {
+    font-size: 30px;
+}
+

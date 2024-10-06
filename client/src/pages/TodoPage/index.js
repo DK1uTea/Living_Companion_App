@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import Task from '../../components/Task';
 import axios from 'axios';
-import TaskChart from '../../components/TaskChart';
 
 export default function TodoPage() {
   const [show, setShow] = useState(false);
@@ -154,14 +153,16 @@ export default function TodoPage() {
   }
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>To-do Tracking</h1>
+    <div>
+      <div className='d-flex flex-column align-items-center justify-content-center' style={{position: 'sticky', top: '65px', backgroundColor: '#fff', zIndex: 2 }}>
+        <h1>To-do Tracking</h1>
 
-      {/* Button to trigger the modal */}
-      <Button variant='primary' onClick={handleShow} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <FontAwesomeIcon icon={faPlus} />
-        Add Task
-      </Button>
+        {/* Button to trigger the modal */}
+        <Button variant='primary' onClick={handleShow} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <FontAwesomeIcon icon={faPlus} />
+          Add Task
+        </Button>
+      </div>
 
       {/* Modal with the form inside */}
       <Modal show={show} onHide={handleClose}>
@@ -220,7 +221,7 @@ export default function TodoPage() {
       </Modal>
 
       {/* Display existing tasks */}
-      <Container className='task-display mt-3'>
+      <Container className='task-display mt-3 p-2' >
         <Row>
           {todoList.map((task) => (
             <Col key={task._id} xs={12} sm={6} md={4} lg={3} className="mb-4">

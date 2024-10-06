@@ -69,10 +69,11 @@ export default function TaskChart() {
     }, []);
 
     return (
-        <div>
+        <div className='todo-chart-container p-4'>
             <h2>Task Completion Ratio by Day</h2>
             {chartData.labels ? (
                 <Line
+                    style={{height: '100%',maxHeight: '800px', width: '100%'}}
                     data={chartData}
                     options={{
                         scales: {

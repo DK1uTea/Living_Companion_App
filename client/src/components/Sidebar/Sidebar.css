@@ -1,65 +1,95 @@
-/* Sidebar.css */
-/* * {
-    box-sizing: border-box;
-} */
+/* Sidebar Animation */
+@keyframes sidebar-open {
+    0% {
+        transform: translateX(-110%);
+    }
 
-/* General Styling */
-.sidebar-header {
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #ccc;
+    100% {
+        transform: translateX(0);
+    }
 }
 
-.sidebar-header svg {
-    margin-top: 5px;
-    margin-left: 10px;
+@keyframes sidebar-close {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-110%);
+    }
+}
+
+/* General Styling */
+.side-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    height: 100%;
+    background-color: #fff;
+    z-index: 3;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    /* Smooth opacity and transform transitions */
+    transform: translateX(0);
+    /* Initially visible */
+}
+
+.sidebar-header {
+    border-bottom: 2px solid #ccc;
+    margin-bottom: 16px;
+}
+
+.sidebar-header div {
+    margin-bottom: 16px;
+}
+
+.side-bar svg {
+    height: 20px;
+    width: 20px;
 }
 
 .sidebar-appname {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: bold;
     margin-bottom: 0;
     margin-right: 20px;
 }
 
 .sidebar-main h1 {
-    font-size: 20px;
-    margin-bottom: 20px;
+    font-size: 22px;
+    margin-bottom: 16px;
 }
 
 /* Navigation Link Styling */
 .nav-link {
     display: flex;
     align-items: center;
-    padding: 10px 0;
-    font-size: 16px;
+    padding: 8px;
+    margin-bottom: 5px;
+    font-size: 18px;
     color: #333;
     transition: background-color 0.3s ease, color 0.3s ease;
     cursor: pointer;
-    border-radius: 6px;
-    /* Slight rounding for nav items */
+    border-radius: 12px;
 }
 
 .nav-link:hover {
     background-color: #67c8d5;
-    /* Light hover background color */
     color: #007bff;
 }
 
 .nav-link p {
     margin: 0;
-    font-size: 16px;
 }
 
 .nav-link svg {
     margin-right: 10px;
+    color: black;
 }
 
 /* Footer Logout Button */
 .sidebar-footer {
-    margin-top: auto;
+    margin-bottom: 5px;
 }
 
 .sidebar-footer .btn {
@@ -69,11 +99,7 @@
     justify-content: center;
     font-size: 16px;
     padding: 10px;
-}
-
-.sidebar-footer .btn svg {
-    vertical-align: middle;
-    /* Ensure the icon is vertically aligned */
+    border-radius: 10px;
 }
 
 .sidebar-footer p {
@@ -81,97 +107,15 @@
     margin-bottom: 0;
     font-size: 16px;
     vertical-align: middle;
-    /* Ensure text is aligned with the icon */
     text-align: center;
 }
 
-/* Collapsed Sidebar Styling */
+/* When Sidebar is collapsed, apply close animation */
 .collapsed {
-    transition: width 0.3s ease-in-out;
-    /* Smooth transition for sidebar width */
+    animation: sidebar-close 0.5s forwards;
 }
 
-.collapsed .sidebar-header p,
-.collapsed .nav-link p,
-.collapsed .sidebar-footer p {
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out, transform 0.3s ease-in-out;
-    /* Smooth fade-out and slide */
-    transform: translateX(-20px);
-    /* Slide text out smoothly */
-    display: none;
-    /* Hide all text after transition */
-}
-
-.collapsed .nav-link svg {
-    margin-right: 0;
-    font-size: 20px;
-    /* Slightly reduce icon size when collapsed */
-    transition: font-size 0.3s ease-in-out, margin-right 0.3s ease-in-out;
-}
-
-.collapsed .sidebar-header svg {
-    transform: rotate(360deg);
-    /* Rotate the icon on collapse */
-    transition: transform 0.3s ease-in-out;
-    /* Smooth icon rotation */
-}
-
-.collapsed .sidebar-footer .btn svg {
-    transform: rotate(360deg);
-    /* Rotate logout icon as well */
-    transition: transform 0.3s ease-in-out;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-
-    .sidebar-header,
-    .sidebar-main,
-    .sidebar-footer {
-        text-align: center;
-    }
-
-    .sidebar-header {
-        justify-content: center;
-    }
-
-    .nav-link {
-        justify-content: center;
-        padding: 15px 0;
-    }
-
-    .nav-link p {
-        display: none;
-        /* Hide text on smaller screens */
-    }
-
-    .nav-link svg {
-        margin-right: 0;
-        font-size: 24px;
-        /* Enlarge icons for mobile */
-    }
-
-    .sidebar-footer .btn {
-        justify-content: center;
-    }
-
-    .sidebar-header p {
-        display: none;
-    }
-
-    .sidebar-footer p {
-        display: none;
-        /* Hide logout text */
-    }
-}
-
-@media (min-width: 769px) and (max-width: 1024px) {
-    .nav-link p {
-        font-size: 14px;
-    }
-
-    .sidebar-main h1 {
-        font-size: 18px;
-    }
+/* When Sidebar is expanded, apply open animation */
+.expanded {
+    animation: sidebar-open 0.5s forwards;
 }

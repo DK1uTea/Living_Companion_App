@@ -1,0 +1,59 @@
+/* HomePage.css */
+
+html {
+    height: 100%;
+}
+
+.home-page {
+    background: #FFF;
+    font: 400 1.5em/1.5 "Droid Serif", serif;
+    color: #111;
+    text-align: center;
+    height: 100%;
+    margin: 0;
+    /* Added to remove default body margin */
+}
+
+.home-page h1 {
+    font: 700 2.8em/1.2 "Droid Sans", sans-serif;
+    text-transform: uppercase;
+}
+
+.home-page h2 {
+    font: 700 1.5em/1.5 "Droid Sans", sans-serif;
+    margin: 1em 0;
+}
+
+#banner {
+    background: url(https://i.ibb.co/3SNpSdc/IMG-1489.jpg) no-repeat fixed 100% 100%;
+    background-size: cover;
+    color: #fff;
+    height: 100vh;
+    /* Make it full viewport height */
+    width: 100%;
+    position: relative;
+    /* Added for positioning text */
+}
+
+#bannertext {
+    width: 24em;
+    position: absolute;
+    /* Change to absolute */
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    /* Center the text */
+    border: .5em solid #fff;
+    padding: 2em 0;
+}
+
+#content {
+    max-width: 28em;
+    text-align: justify;
+    margin: 0 auto;
+    padding: 2em;
+}
+
+#content p {
+    margin: 0 0 2em;
+}

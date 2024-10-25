@@ -17,7 +17,7 @@ export default function TodoPage() {
   // Fetch all tasks of user
   const fetchTasks = async () => {
     const userID = getUserIdFromLocalStorage();
-    if (!userID) return; 
+    if (!userID) return;
 
     try {
       const res = await axios.get(`http://localhost:3001/api/getTasks/${userID}`);
@@ -32,9 +32,9 @@ export default function TodoPage() {
   }, []);
 
   // Get user id from local storage
-  const getUserIdFromLocalStorage = () => {   
+  const getUserIdFromLocalStorage = () => {
     try {
-      const user = JSON.parse(localStorage.getItem('user'));     
+      const user = JSON.parse(localStorage.getItem('user'));
       console.log(user);
       return user._id;
     } catch (error) {
@@ -47,7 +47,7 @@ export default function TodoPage() {
   const handleAddTask = async (e) => {
     e.preventDefault();
 
-    const user = JSON.parse(localStorage.getItem('user'));  
+    const user = JSON.parse(localStorage.getItem('user'));
     const taskDueDate = new Date(dueDate);
 
     const reqData = {
@@ -154,7 +154,19 @@ export default function TodoPage() {
 
   return (
     <div>
-      <div className='d-flex flex-column align-items-center justify-content-center' style={{position: 'sticky', top: '65px', backgroundColor: '#fff', zIndex: 2 }}>
+      <div
+        className='d-flex flex-column align-items-center justify-content-center'
+        style={{
+          position: 'sticky',
+          top: '65px',
+          backgroundColor: '#fff',
+          zIndex: 2,
+          padding: "12px",
+          borderBottomLeftRadius: "10px",
+          borderBottomRightRadius: "10px",
+          border: "1px solid #babfbf"
+        }}
+      >
         <h1>To-do Tracking</h1>
 
         {/* Button to trigger the modal */}
@@ -167,12 +179,12 @@ export default function TodoPage() {
       {/* Modal with the form inside */}
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
-          <Form onSubmit={taskIdToEdit ? handleEditTask : handleAddTask} 
-                style={{ border: '1px solid black', padding: '10px', borderRadius: '10px' }}
+          <Form onSubmit={taskIdToEdit ? handleEditTask : handleAddTask}
+            style={{ border: '1px solid black', padding: '10px', borderRadius: '10px' }}
           >
             <Row className='mb-3'>
               <Form.Group as={Col}>
-                <Form.Label>Task title:</Form.Label>
+                <Form.Label><strong>Task title:</strong></Form.Label>
                 <Form.Control
                   required
                   type='text'
@@ -182,7 +194,7 @@ export default function TodoPage() {
                 ></Form.Control>
               </Form.Group>
               <Form.Group as={Col}>
-                <Form.Label>Task description:</Form.Label>
+                <Form.Label><strong>Task description:</strong></Form.Label>
                 <Form.Control
                   type='text'
                   placeholder='Enter your task description'
@@ -193,7 +205,7 @@ export default function TodoPage() {
             </Row>
             <Row className='mb-3'>
               <Form.Group as={Col}>
-                <Form.Label>Due Date:</Form.Label>
+                <Form.Label><strong>Due Date:</strong></Form.Label>
                 <Form.Control
                   type='Date'
                   value={dueDate}
@@ -201,7 +213,7 @@ export default function TodoPage() {
                 ></Form.Control>
               </Form.Group>
               <Form.Group as={Col}>
-                <Form.Label>Priority:</Form.Label>
+                <Form.Label><strong>Priority:</strong></Form.Label>
                 <Dropdown onSelect={(eventKey) => setPriority(eventKey)}>
                   <Dropdown.Toggle variant="success" id="dropdown-basic">
                     {priority || 'Choose priority'}
@@ -215,7 +227,9 @@ export default function TodoPage() {
                 </Dropdown>
               </Form.Group>
             </Row>
-            <Button type='submit'>{taskIdToEdit ? 'Update Task' : 'Add Task'}</Button>
+            <div className='d-flex justify-content-center'>
+              <Button type='submit'>{taskIdToEdit ? 'Update Task' : 'Add Task'}</Button>
+            </div>
           </Form>
         </Modal.Body>
       </Modal>
@@ -225,10 +239,10 @@ export default function TodoPage() {
         <Row>
           {todoList.map((task) => (
             <Col key={task._id} xs={12} sm={6} md={4} lg={3} className="mb-4">
-              <Task 
-                task={task} 
-                handleDeleteTask={handleDeleteTask} 
-                handleOpenEditModal={handleOpenEditModal} 
+              <Task
+                task={task}
+                handleDeleteTask={handleDeleteTask}
+                handleOpenEditModal={handleOpenEditModal}
                 handleMarkTaskAsCompleted={handleMarkTaskAsCompleted}
               />
             </Col>

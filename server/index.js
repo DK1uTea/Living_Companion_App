@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import Task from './routers/Task.js';
 import User from './routers/User.js';
+import Transaction from './routers/Transaction.js';
 
 dotenv.config();
 const app = express();
@@ -19,8 +20,9 @@ app.use(cors());
 connectDB();
 
 // routers
-app.use('/api', Task);
 app.use('/api', User);
+app.use('/api', Task);
+app.use('./api', Transaction);
 
 // Start the server
 app.listen(PORT, () => {

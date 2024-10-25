@@ -28,11 +28,11 @@ export const addTask = async (req, res) => {
 
 // Get all task follow by user id
 export const getTask = async (req, res) => {
-    const id = req.params.id;
+    const userID = req.params.id;
 
     try {
         // Find all task follow by user id
-        const tasks = await Task.find({ user: id });
+        const tasks = await Task.find({ user: userID });
         // If dont have any task return not found
         if (tasks.length === 0) {
             return res.status(404).send('Not found any tasks!');

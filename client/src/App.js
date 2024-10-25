@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'react-datepicker/dist/react-datepicker.css';
 import LoginAndRegister from "./pages/LoginAndRegister";
 import Sidebar from "./components/Sidebar";
-import { Col, Container, Row } from "react-bootstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars } from '@fortawesome/free-solid-svg-icons';
 import HomePage from "./pages/HomePage";
 import TodoPage from "./pages/TodoPage";
 import HabitPage from "./pages/HabitPage";
 import ConsumptionPage from "./pages/ConsumptionPage";
-import { jwtDecode } from "jwt-decode";
 import './App.css';
 import StatisticPage from "./pages/StatisticPage";
 

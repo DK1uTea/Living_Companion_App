@@ -1,0 +1,26 @@
+.calendar-navigation {
+    border: 1px solid black;
+    margin-bottom: 16px;
+    border-radius: 30px;
+    padding: 8px;
+}
+
+.calendar-navigation span {
+    font-size: 24px;
+}
+
+.calendar-navigation svg {
+    font-size: 30px;
+}
+
+.calendar-day-button {
+    background-color: aquamarine;
+    border: 1px solid black;
+    border-radius: 50%;
+    height: 60px;
+    width: 60px;
+}
+
+.calendar-week-days {
+    margin-bottom: 16px;
+}

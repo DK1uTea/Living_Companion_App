@@ -1,0 +1,14 @@
+.todo-chart-container {
+    height: calc(100vh - 66px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 32px;
+}
+
+@media (max-width: 480px){
+    .todo-chart-container {
+        padding: 16px;
+    }
+}

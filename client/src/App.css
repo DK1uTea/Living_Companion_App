@@ -25,18 +25,25 @@ body {
 .icon-open-menu {
     display: flex;
     align-items: center;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .icon-open-menu svg {
-    width: 25px;
-    height: 25px;
+    width: 20px;
+    height: 20px;
 }
 
 .icon-open-menu:hover {
     opacity: 0.6;
+    transform: scale(1.2);
 }
 
 .app-name-title {
     font-size: 30px;
 }
 
+@media (max-width: 480px) {
+    .app-name-title{
+        font-size: 25px;
+    }
+}

@@ -57,3 +57,44 @@ html {
 #content p {
     margin: 0 0 2em;
 }
+
+/* Media Queries for smaller screens */
+
+@media (max-width: 768px) {
+    #bannertext {
+        width: 65%;
+        padding: 1em;
+    }
+
+    #content {
+        padding: 1.5em;
+    }
+
+    .home-page h1 {
+        font-size: 1.8em;
+    }
+
+    .home-page h2 {
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 576px) {
+    #bannertext {
+        width: 70%;
+        padding: 0.8em;
+        border-width: 0.3em;
+    }
+
+    #content {
+        padding: 1em;
+    }
+
+    .home-page h1 {
+        font-size: 1.2em;
+    }
+
+    .home-page h2 {
+        font-size: 0.8em;
+    }
+}

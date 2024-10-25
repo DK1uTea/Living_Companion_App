@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js'; // Import and register necessary components
 import axios from 'axios';
+import './TaskChart.css'
 
 // Register components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -69,11 +70,10 @@ export default function TaskChart() {
     }, []);
 
     return (
-        <div className='todo-chart-container p-4'>
+        <div className='todo-chart-container'>
             <h2>Task Completion Ratio by Day</h2>
             {chartData.labels ? (
                 <Line
-                    style={{height: '100%',maxHeight: '800px', width: '100%'}}
                     data={chartData}
                     options={{
                         scales: {

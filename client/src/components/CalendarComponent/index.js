@@ -70,7 +70,7 @@ export default function CalendarComponent({ onDateChange }) {
                     {renderDaysOfWeek()}
                 </div>
                 <p className="calendar-selected-date text-center">
-                    Selected Date: <strong>{selectedDate.toDateString()}</strong>
+                    Selected Date: <strong>{format(selectedDate, "yyyy-MM-dd").toString()}</strong>
                 </p>           
             </div>
         </div>

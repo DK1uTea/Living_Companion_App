@@ -22,7 +22,7 @@ connectDB();
 // routers
 app.use('/api', User);
 app.use('/api', Task);
-app.use('./api', Transaction);
+app.use('/api', Transaction);
 
 // Start the server
 app.listen(PORT, () => {

@@ -14,7 +14,10 @@
 }
 
 .calendar-day-button {
-    background-color: aquamarine;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #2B90ED;
     border: 1px solid black;
     border-radius: 50%;
     height: 60px;
@@ -23,4 +26,12 @@
 
 .calendar-week-days {
     margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+    .calendar-day-button {
+        height: 45px;
+        width: 45px;
+        font-size: 11px;
+    }
 }

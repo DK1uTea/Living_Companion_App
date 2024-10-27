@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CalendarComponent from '../../components/CalendarComponent'
 import Transaction from '../../components/Transaction'
-import { Button, Col, Dropdown, DropdownItem, Form, FormLabel, ListGroup, Modal, Row } from 'react-bootstrap';
+import { Button, Col, Dropdown, Form, ListGroup, Modal, Row } from 'react-bootstrap';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { format } from 'date-fns';
+import { format, isToday } from 'date-fns';
+import axios from 'axios';
 
 export default function ConsumptionPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -18,8 +19,8 @@ export default function ConsumptionPage() {
   const [totalExpense, setTotalExpense] = useState(0.0);
 
   const handleDateChange = (day) => {
-    setSelectedDate(day);
     const formattedDate = format(day, "yyyy-MM-dd");
+    setSelectedDate(formattedDate);
   };
 
   const handleShow = () => setShow(true); // handle show modal
@@ -38,12 +39,99 @@ export default function ConsumptionPage() {
     setCategory(''); // Clear category selection when switching types
   };
 
+  // Get user id from local storage
+  const getUserIdFromLocalStorage = () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      console.log(user);
+      return user._id || null;
+    } catch (error) {
+      console.error('Invalid token:', error);
+      return null;
+    }
+  };
+
   // handle add new transaction
   const handleAddTransaction = async (e) => {
     e.preventDefault();
+    // Get user from local storage
+    const user = JSON.parse(localStorage.getItem('user'));
+
+    const reqData = {
+      user,
+      type,
+      category,
+      amount,
+      description
+    };
+
+    try {
+      const res = await axios.post('http://localhost:3001/api/addTransaction', reqData);
+      console.log('Add transaction successfully');
+      setTransactionList((prevTransaction) => {
+        return [...prevTransaction, res.data.transaction];
+      });
+    } catch (error) {
+      console.error("Error: ", error);
+      console.log('Failed to add transaction')
+    }
 
     // close modal
     handleClose();
+  };
+
+  const fetchTransactionByDay = async () => {
+    const userID = getUserIdFromLocalStorage();
+    if (!userID) return;
+
+    const formattedDate = format(selectedDate, "yyyy-MM-dd");
+
+    try {
+      const res = await axios.get(`http://localhost:3001/api/getTransaction/${userID}/${formattedDate}`);
+      setTransactionList(res.data.transactions || []);
+    } catch (error) {
+      console.error("Error:", error);
+      setTransactionList([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchTransactionByDay();
+    getTotalAmount();
+  }, [selectedDate]);
+
+  useEffect(() => {
+    getTotalAmount();
+  }, [transactionList]);
+
+  // calculate total amount income / expense transaction
+  const getTotalAmount = () => {
+    let total_income = 0;
+    let total_expense = 0;
+
+    transactionList.forEach(transaction => {
+      if (transaction.type === 'Income') {
+        total_income += transaction.amount;
+      } else if (transaction.type === 'Expense') {
+        total_expense += transaction.amount;
+      }
+    });
+
+    setTotalIncome(total_income);
+    setTotalExpense(total_expense);
+  };
+
+  // Format display for total amout
+  const formatNumber = (num) => {
+    if (num >= 1e9) {
+      return (num / 1e9).toFixed(1) + 'B'; // Billions
+    } else if (num >= 1e6) {
+      return (num / 1e6).toFixed(1) + 'M'; // Millions
+    } else if (num >= 1e3) {
+      return (num / 1e3).toFixed(1) + 'K'; // Thousands
+    } else {
+      return num.toString(); // Normal format
+    }
   };
 
   return (
@@ -54,25 +142,28 @@ export default function ConsumptionPage() {
       <div className='consumption-main'>
         <div className='total-transactions d-flex flex-row justify-content-between align-items-center mb-3'>
           <div className='total-incomes'>
-            <strong>Income: {totalIncome}</strong>
+            <strong>Income: {formatNumber(totalIncome)}</strong>
           </div>
-          <Button
-            className='d-flex flex-row justify-content-center align-items-center'
-            style={{ gap: '8px' }}
-            onClick={handleShow}
-          >
-            <FontAwesomeIcon icon={faPlus} />
-            Add Transaction for {selectedDate.toDateString()}
-          </Button>
+          {isToday(selectedDate) && (
+            <Button
+              className='d-flex flex-row justify-content-center align-items-center'
+              style={{ gap: '8px' }}
+              onClick={handleShow}
+            >
+              <FontAwesomeIcon icon={faPlus} />
+              {/* Add Transaction for {format(selectedDate, "yyyy-MM-dd").toString()} */}
+              Add Transaction
+            </Button>
+          )}
           <div className='total-expenses'>
-            <strong>Expense: {totalExpense}</strong>
+            <strong>Expense: {formatNumber(totalExpense)}</strong>
           </div>
         </div>
 
         {/* Modal with the form inside */}
         <Modal show={show} onHide={handleClose}>
           <Modal.Body>
-            <Form 
+            <Form
               onSubmit={handleAddTransaction}
               style={{ border: '1px solid black', padding: '10px', borderRadius: '10px' }}
             >
@@ -158,12 +249,16 @@ export default function ConsumptionPage() {
           </Modal.Body>
         </Modal>
 
-        <div className='transaction-list'>
-          <ListGroup>
-            {/* Render transaction list here */}
-
-
-          </ListGroup>
+        <div className='transaction-list d-flex justify-content-center'>
+          {transactionList.length > 0 ? (
+            <ListGroup style={{ width: '100%' }}>
+              {transactionList.map((transaction) => (
+                <Transaction key={transaction._id} transaction={transaction} formatNumber={formatNumber} />
+              ))}
+            </ListGroup>
+          ) : (
+            <div>No transactions for this day</div>
+          )}
         </div>
       </div>
     </div>

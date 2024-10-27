@@ -6,10 +6,10 @@ export const addTransaction = async (req, res) => {
 
     try {
         const newTransaction = new Transaction({
-            user, 
-            type, 
+            user,
+            type,
             category,
-            amount, 
+            amount,
             description
         });
         console.log(`New transaction: ${newTransaction}`);
@@ -19,7 +19,7 @@ export const addTransaction = async (req, res) => {
             message: 'Add transaction successfully!',
             transaction: newTransaction
         });
-        
+
     } catch (error) {
         console.error("Error ", error);
         return res.status(500).send("Error adding transaction!");
@@ -28,7 +28,9 @@ export const addTransaction = async (req, res) => {
 
 export const getTransactionByDay = async (req, res) => {
     const userID = req.params.id;
+    console.log(userID);
     const dayString = req.params.day;
+    console.log(dayString);
 
     try {
         // Chuyển đổi dayString thành một đối tượng Date
@@ -36,15 +38,22 @@ export const getTransactionByDay = async (req, res) => {
         const endOfDay = new Date(dayString);
         endOfDay.setHours(23, 59, 59, 999); // Đặt thời gian kết thúc của ngày
 
+        // Chuyển đổi sang UTC
+        const utcStartOfDay = new Date(startOfDay.toUTCString());
+        const utcEndOfDay = new Date(endOfDay.toUTCString());
+
+        console.log(`Start day: ${utcStartOfDay}`);
+        console.log(`End day: ${utcStartOfDay}`);
+        
         // Tìm các giao dịch của user trong ngày cụ thể
         const transactions = await Transaction.find({
             user: userID,
             createdAt: {
-                $gte: startOfDay,
-                $lt: endOfDay
+                $gte: utcStartOfDay,
+                $lt: utcEndOfDay
             }
         });
-
+        console.log(`Transactions found: ${transactions}`);
         // Kiểm tra nếu không có giao dịch nào
         if (transactions.length === 0) {
             return res.status(404).send("This user doesn't have any transactions on this day!");

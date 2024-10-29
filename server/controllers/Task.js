@@ -71,10 +71,10 @@ export const editTask = async (req, res) => {
             { title, description, dueDate, priority },
             { new: true } // Return the updated task
         );
-        console.log(`Updated Task found: ${updatedTask}`);
         if (!updatedTask) {
             return res.status(404).send('Task not found');
         }
+        console.log(`Updated Task found: ${updatedTask}`);
 
         return res.status(200).json({ message: 'Updated task successfully', updatedTask });
     } catch (error) {

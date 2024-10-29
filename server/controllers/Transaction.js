@@ -1,6 +1,7 @@
 import Transaction from "../models/Transaction.js";
 import mongoose from "mongoose";
 
+// add transaction to DB
 export const addTransaction = async (req, res) => {
     const { user, type, category, amount, description } = req.body;
 
@@ -26,6 +27,7 @@ export const addTransaction = async (req, res) => {
     }
 };
 
+// get transaction by day from DB
 export const getTransactionByDay = async (req, res) => {
     const userID = req.params.id;
     console.log(userID);
@@ -68,5 +70,43 @@ export const getTransactionByDay = async (req, res) => {
     } catch (error) {
         console.error("Error fetching transactions by day: ", error);
         return res.status(500).send("Error retrieving transactions!");
+    }
+};
+
+// find transaction by id and delete from DB
+export const deleteTransaction = async (req, res) => {
+    const transactionID = req.params.id;
+
+    try {
+        const deletedTransaction = await Transaction.findByIdAndDelete(transactionID);
+        console.log(`Deleted Transaction found: ${deleteTransaction}`);
+        if(!deleteTransaction) {
+            return res.status(404).send('Transaction not found!');
+        }
+        return res.status(200).send(`Transaction delete successfully!`);
+    } catch (error) {
+        console.error('Error delete task:', error);
+        return res.status(500).message('Error deleting transaction!');
+    }
+};
+
+// find transaction by id and edit it then save to DB
+export const editTransaction = async (req, res) => {
+    const transactionID = req.params.id;
+    const { type, category, amount, description } = req.body;
+    try {
+        const updatedTransaction = await Transaction.findByIdAndUpdate(
+            transactionID,
+            { type, category, amount, description },
+            {new: true}
+        );
+        if(!updatedTransaction){
+            return res.status(404).send('Transaction not found');
+        }
+        console.log(`Updated Transaction found: ${updatedTransaction}`);
+        return res.status(200).json({message: 'Update transaction successfully!', updatedTransaction});
+    } catch (error) {
+        console.error('Error:', error);
+        return res.status(500).send('Error updating transaction!');
     }
 };

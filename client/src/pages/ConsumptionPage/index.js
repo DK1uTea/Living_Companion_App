@@ -17,6 +17,48 @@ export default function ConsumptionPage() {
   const [description, setDescription] = useState('');
   const [totalIncome, setTotalIncome] = useState(0.0);
   const [totalExpense, setTotalExpense] = useState(0.0);
+  const [transactionIdToEdit, setTransactionIdToEdit] = useState(null);
+
+  const fetchTransactionByDay = async () => {
+    const userID = getUserIdFromLocalStorage();
+    if (!userID) return;
+
+    const formattedDate = format(selectedDate, "yyyy-MM-dd");
+
+    try {
+      const res = await axios.get(`http://localhost:3001/api/getTransaction/${userID}/${formattedDate}`);
+      setTransactionList(res.data.transactions || []);
+    } catch (error) {
+      console.error("Error:", error);
+      setTransactionList([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchTransactionByDay();
+    getTotalAmount();
+  }, [selectedDate]);
+
+  useEffect(() => {
+    getTotalAmount();
+  }, [transactionList]);
+
+  // calculate total amount income / expense transaction
+  const getTotalAmount = () => {
+    let total_income = 0;
+    let total_expense = 0;
+
+    transactionList.forEach(transaction => {
+      if (transaction.type === 'Income') {
+        total_income += transaction.amount;
+      } else if (transaction.type === 'Expense') {
+        total_expense += transaction.amount;
+      }
+    });
+
+    setTotalIncome(total_income);
+    setTotalExpense(total_expense);
+  };
 
   const handleDateChange = (day) => {
     const formattedDate = format(day, "yyyy-MM-dd");
@@ -31,6 +73,17 @@ export default function ConsumptionPage() {
     setCategory('');
     setAmount(0);
     setDescription('');
+    setTransactionIdToEdit(null);
+  }
+
+  // handle show edit modal 
+  const handleOpenEditModal = (transaction) => {
+    setTransactionIdToEdit(transaction._id);
+    setType(transaction.type);
+    setCategory(transaction.category);
+    setAmount(transaction.amount);
+    setDescription(transaction.description);
+    setShow(true);
   }
 
   // handle type switch
@@ -80,46 +133,6 @@ export default function ConsumptionPage() {
     handleClose();
   };
 
-  const fetchTransactionByDay = async () => {
-    const userID = getUserIdFromLocalStorage();
-    if (!userID) return;
-
-    const formattedDate = format(selectedDate, "yyyy-MM-dd");
-
-    try {
-      const res = await axios.get(`http://localhost:3001/api/getTransaction/${userID}/${formattedDate}`);
-      setTransactionList(res.data.transactions || []);
-    } catch (error) {
-      console.error("Error:", error);
-      setTransactionList([]);
-    }
-  };
-
-  useEffect(() => {
-    fetchTransactionByDay();
-    getTotalAmount();
-  }, [selectedDate]);
-
-  useEffect(() => {
-    getTotalAmount();
-  }, [transactionList]);
-
-  // calculate total amount income / expense transaction
-  const getTotalAmount = () => {
-    let total_income = 0;
-    let total_expense = 0;
-
-    transactionList.forEach(transaction => {
-      if (transaction.type === 'Income') {
-        total_income += transaction.amount;
-      } else if (transaction.type === 'Expense') {
-        total_expense += transaction.amount;
-      }
-    });
-
-    setTotalIncome(total_income);
-    setTotalExpense(total_expense);
-  };
 
   // Format display for total amout
   const formatNumber = (num) => {
@@ -134,6 +147,45 @@ export default function ConsumptionPage() {
     }
   };
 
+  // handle delete transaction
+  const handleDeleteTransaction = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3001/api/deleteTransaction/${id}`);
+      setTransactionList(transactionList.filter((transaction) => transaction._id !== id));
+      console.log('Delete transaction successfully!');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  // handle edit transaction
+  const handleEditTransaction = async (e) => {
+    e.preventDefault();
+
+    const reqData = {
+      type, 
+      category, 
+      amount,
+      description
+    };
+
+    try {
+      const res = await axios.put(`http://localhost:3001/api/editTransaction/${transactionIdToEdit}`, reqData);
+      const updatedTransaction = res.data.updatedTransaction;
+      console.log(updatedTransaction);
+      setTransactionList((prevTransactionList) => 
+        prevTransactionList.map((transaction) => 
+          transaction._id === updatedTransaction._id ? updatedTransaction : transaction)
+      );
+      console.log('Update transaction successfully');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+
+    // close modal after edit
+    handleClose();
+  };
+
   return (
     <div className='consumptionpage-container p-2'>
       <div className='consumption-header'>
@@ -142,7 +194,7 @@ export default function ConsumptionPage() {
       <div className='consumption-main'>
         <div className='total-transactions d-flex flex-row justify-content-between align-items-center mb-3'>
           <div className='total-incomes'>
-            <strong>Income: {formatNumber(totalIncome)}</strong>
+            <strong style={{color: 'green'}}>Income: {formatNumber(totalIncome)}</strong>
           </div>
           {isToday(selectedDate) && (
             <Button
@@ -156,7 +208,7 @@ export default function ConsumptionPage() {
             </Button>
           )}
           <div className='total-expenses'>
-            <strong>Expense: {formatNumber(totalExpense)}</strong>
+            <strong style={{color: 'red'}}>Expense: {formatNumber(totalExpense)}</strong>
           </div>
         </div>
 
@@ -164,7 +216,7 @@ export default function ConsumptionPage() {
         <Modal show={show} onHide={handleClose}>
           <Modal.Body>
             <Form
-              onSubmit={handleAddTransaction}
+              onSubmit={transactionIdToEdit ? handleEditTransaction : handleAddTransaction}
               style={{ border: '1px solid black', padding: '10px', borderRadius: '10px' }}
             >
               <Row className='mb-3'>
@@ -243,7 +295,7 @@ export default function ConsumptionPage() {
                 </Form.Group>
               </Row>
               <div className='d-flex justify-content-center'>
-                <Button type='submit'>Add Transaction</Button>
+                <Button type='submit'>{transactionIdToEdit ? 'Update Transaction'  : 'Add Transaction'}</Button>
               </div>
             </Form>
           </Modal.Body>
@@ -253,7 +305,13 @@ export default function ConsumptionPage() {
           {transactionList.length > 0 ? (
             <ListGroup style={{ width: '100%' }}>
               {transactionList.map((transaction) => (
-                <Transaction key={transaction._id} transaction={transaction} formatNumber={formatNumber} />
+                <Transaction 
+                  key={transaction._id} 
+                  transaction={transaction} 
+                  formatNumber={formatNumber} 
+                  handleDeleteTransaction={handleDeleteTransaction}
+                  handleOpenEditModal={handleOpenEditModal}
+                />
               ))}
             </ListGroup>
           ) : (

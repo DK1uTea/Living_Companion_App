@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react'
 import { ListGroup } from 'react-bootstrap'
 
-export default function Transaction({ transaction, formatNumber }) {
+export default function Transaction({ transaction, formatNumber, handleDeleteTransaction, handleOpenEditModal }) {
 
   const getTypeStyle = () => {
     switch (transaction.type) {
@@ -23,8 +23,15 @@ export default function Transaction({ transaction, formatNumber }) {
         </div>
         <div style={{ flex: 1, textAlign: 'center' }}><strong>Amount: </strong>{formatNumber(transaction.amount)}</div>
         <div className='trans-item-icon d-flex justify-content-end align-items-center' style={{ flex: 1, gap: '8px'}}>
-          <FontAwesomeIcon icon={faPenToSquare} style={{ color: "#00a7fa", width: '18px', height: '18px'}} />
-          <FontAwesomeIcon icon={faTrash} style={{color: "#d10a0a",  width: '18px', height: '18px'}} />
+          <FontAwesomeIcon 
+            icon={faPenToSquare} 
+            style={{ color: "#00a7fa", width: '18px', height: '18px'}} 
+            onClick={() => handleOpenEditModal(transaction)}
+          />
+          <FontAwesomeIcon 
+            icon={faTrash} style={{color: "#d10a0a",  width: '18px', height: '18px'}} 
+            onClick={() => handleDeleteTransaction(transaction._id)}
+          />
         </div>
       </div>
     </ListGroup.Item>

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Button, Card, ListGroup } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faX, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faX, faSpinner, faPenToSquare, faTrash, faCircleCheck } from '@fortawesome/free-solid-svg-icons'
 
 const formatDate = (date) => {
     const d = new Date(date);
@@ -94,14 +94,14 @@ export default function Task({ task, handleDeleteTask, handleOpenEditModal, hand
                         disabled={isDisable}
                         style={{ flex: '1 1 30%' }} // Allows wrapping with a minimum size
                     >
-                        Edit
+                        <FontAwesomeIcon icon={faPenToSquare} />
                     </Button>
                     <Button
                         variant='danger'
                         onClick={() => handleDeleteTask(task._id)}
                         style={{ flex: '1 1 30%' }} // Allows wrapping with a minimum size
                     >
-                        Delete
+                        <FontAwesomeIcon icon={faTrash} />
                     </Button>
                     <Button
                         variant='success'
@@ -109,7 +109,7 @@ export default function Task({ task, handleDeleteTask, handleOpenEditModal, hand
                         disabled={isDisable}
                         style={{ flex: '1 1 30%' }} // Allows wrapping with a minimum size
                     >
-                        Complete
+                        <FontAwesomeIcon icon={faCircleCheck} />
                     </Button>
                 </div>
 

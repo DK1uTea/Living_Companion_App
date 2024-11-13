@@ -6,6 +6,7 @@ import connectDB from './config/db.js';
 import Task from './routers/Task.js';
 import User from './routers/User.js';
 import Transaction from './routers/Transaction.js';
+import Habit from './routers/Habit.js'
 
 dotenv.config();
 const app = express();
@@ -23,6 +24,7 @@ connectDB();
 app.use('/api', User);
 app.use('/api', Task);
 app.use('/api', Transaction);
+app.use('/api', Habit);
 
 // Start the server
 app.listen(PORT, () => {

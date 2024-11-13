@@ -79,10 +79,10 @@ export const deleteTransaction = async (req, res) => {
 
     try {
         const deletedTransaction = await Transaction.findByIdAndDelete(transactionID);
-        console.log(`Deleted Transaction found: ${deleteTransaction}`);
         if(!deleteTransaction) {
             return res.status(404).send('Transaction not found!');
         }
+        console.log(`Deleted Transaction found: ${deleteTransaction}`);
         return res.status(200).send(`Transaction delete successfully!`);
     } catch (error) {
         console.error('Error delete task:', error);

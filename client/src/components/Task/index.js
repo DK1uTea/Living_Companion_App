@@ -3,6 +3,7 @@ import { Button, Card, ListGroup } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faX, faSpinner, faPenToSquare, faTrash, faCircleCheck } from '@fortawesome/free-solid-svg-icons'
 
+// function for formatting date
 const formatDate = (date) => {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, '0'); // Pad day with leading zero
@@ -37,6 +38,7 @@ export default function Task({ task, handleDeleteTask, handleOpenEditModal, hand
             <Card.Body>
                 <Card.Title>
                     <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'nowrap' }}>
+                        {/* display title */}
                         <div style={{
                             display: '-webkit-box',
                             WebkitLineClamp: 1,  // Limit to 1 line for title
@@ -45,9 +47,9 @@ export default function Task({ task, handleDeleteTask, handleOpenEditModal, hand
                             textOverflow: 'ellipsis',
                             whiteSpace: 'normal'
                         }}>
-                            {/* {task.title.length > 18 ? `${task.title.slice(0, 18)}...` : task.title} */}
                             {task.title}
                         </div>
+                        {/* display status icon */}
                         <div>
                             {task.status === 'completed' ?
                                 (<FontAwesomeIcon icon={faCheck} beat style={{ color: "#63E6BE", marginLeft: '10px' }} />) :
@@ -58,6 +60,7 @@ export default function Task({ task, handleDeleteTask, handleOpenEditModal, hand
                         </div>
                     </div>
                 </Card.Title>
+                {/* display description */}
                 <Card.Text style={{
                     display: '-webkit-box',
                     WebkitLineClamp: 1,  // Limit to 1 lines for description
@@ -66,20 +69,23 @@ export default function Task({ task, handleDeleteTask, handleOpenEditModal, hand
                     textOverflow: 'ellipsis',
                     whiteSpace: 'normal'
                 }}>
-                    {/* {task.description.length > 30 ? `${task.description.slice(0, 30)}...` : task.description} */}
                     {task.description}
                 </Card.Text>
                 <ListGroup className="list-group-flush" >
+                    {/* display duedate */}
                     <ListGroup.Item style={listItemStyle} >
                         <strong>Due Date: </strong>{formattedDate}
                     </ListGroup.Item>
+                    {/* display priority */}
                     <ListGroup.Item style={listItemStyle} >
                         <strong>Priority: </strong>{task.priority}
                     </ListGroup.Item>
+                    {/* display status */}
                     <ListGroup.Item style={listItemStyle} >
                         <strong>Status: </strong>{task.status}
                     </ListGroup.Item>
                 </ListGroup>
+                {/* div contains btn to click for updating, deleting, marking */}
                 <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -88,6 +94,7 @@ export default function Task({ task, handleDeleteTask, handleOpenEditModal, hand
                     paddingTop: '8px',
                     gap: '5px'
                 }}>
+                    {/* btn edit */}
                     <Button
                         variant='primary'
                         onClick={() => handleOpenEditModal(task)}
@@ -96,6 +103,7 @@ export default function Task({ task, handleDeleteTask, handleOpenEditModal, hand
                     >
                         <FontAwesomeIcon icon={faPenToSquare} />
                     </Button>
+                    {/* btn delete */}
                     <Button
                         variant='danger'
                         onClick={() => handleDeleteTask(task._id)}
@@ -103,6 +111,7 @@ export default function Task({ task, handleDeleteTask, handleOpenEditModal, hand
                     >
                         <FontAwesomeIcon icon={faTrash} />
                     </Button>
+                    {/* btn mark as complete */}
                     <Button
                         variant='success'
                         onClick={() => handleMarkTaskAsCompleted(task._id)}
@@ -112,7 +121,6 @@ export default function Task({ task, handleDeleteTask, handleOpenEditModal, hand
                         <FontAwesomeIcon icon={faCircleCheck} />
                     </Button>
                 </div>
-
             </Card.Body>
         </Card>
     )

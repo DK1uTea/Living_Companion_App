@@ -1,42 +1,291 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React from 'react'
-import { Button, ListGroup, Tab, Tabs } from 'react-bootstrap'
+import React, { useEffect, useState } from 'react'
+import { Button, Col, Dropdown, Form, ListGroup, Modal, Row, Tab, Tabs } from 'react-bootstrap'
 import Habit from '../../components/Habit'
+import axios from 'axios'
 
 export default function HabitPage() {
+  const [dailyHabitList, setDailyHabitList] = useState([]);
+  const [weeklyHabitList, setWeeklyHabitList] = useState([]);
+  const [monthlyHabitList, setMonthlyHabitList] = useState([]);
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [frequency, setFrequency] = useState('');
+  const [targetCount, setTargetCount] = useState(1);
+  const [show, setShow] = useState(false);
+  const [habitIdToEdit, setHabitIdToEdit] = useState(null);
+
+  // fetch habit list follow by frequency from server
+  const fetchHabit = async () => {
+    const userId = getUserIdFromLocalStorage();
+    if (!userId) return;
+
+    try {
+      const res = await axios.get(`http://localhost:3001/api/getHabit/${userId}`);
+      setDailyHabitList(res.data.dailyHabits || []);
+      setWeeklyHabitList(res.data.weeklyHabits || []);
+      setMonthlyHabitList(res.data.monthlyHabits || []);
+      console.log('Fetch habit list successfully!');
+    } catch (error) {
+      console.error('Error fetching habits', error);
+    }
+  }
+
+  useEffect(() => {
+    fetchHabit();
+  }, []);
+
+  // get useId from local storage
+  const getUserIdFromLocalStorage = () => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      console.log(user);
+      return user._id || null;
+    } catch (error) {
+      console.error('Invalid token:', error);
+      return null;
+    }
+  };
+
+  // handle add habit
+  const handleAddHabit = async (e) => {
+    e.preventDefault();
+    // get user from local storage
+    const user = JSON.parse(localStorage.getItem('user'));
+    const reqData = {
+      user,
+      name,
+      description,
+      frequency,
+      targetCount
+    }
+    console.log(reqData);
+    try {
+      const res = await axios.post('http://localhost:3001/api/addHabit', reqData);
+      const newHabit = res.data.habit;
+      switch (newHabit.frequency) {
+        case 'daily':
+          setDailyHabitList((prevHabit) => [...prevHabit, newHabit]);
+          console.log(`Add new habit successfully`, newHabit);
+          break;
+        case 'weekly':
+          setWeeklyHabitList((prevHabit) => [...prevHabit, newHabit]);
+          console.log(`Add new habit successfully`, newHabit);
+          break;
+        default:
+          setMonthlyHabitList((prevHabit) => [...prevHabit, newHabit]);
+          console.log(`Add new habit successfully`, newHabit);
+          break;
+      }
+    } catch (error) {
+      console.error('Error adding habit', error);
+    }
+    handleClose();
+  };
+
+  // handle show modal
+  const handleShow = () => setShow(true);
+
+  // handle close modal
+  const handleClose = () => {
+    setShow(false);
+    setName('');
+    setDescription('');
+    setFrequency('');
+    setTargetCount('');
+    setHabitIdToEdit(null);
+  };
+
+  // handle show edit modal
+  const handleOpenEditModal = (habit) => {
+    setHabitIdToEdit(habit._id);
+    setName(habit.name);
+    setDescription(habit.description);
+    setFrequency(habit.frequency);
+    setTargetCount(habit.targetCount);
+    setShow(true);
+  }
+
+  // handle delete habit
+  const handleDeleteHabit = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3001/api/deleteHabit/${id}`);
+      setDailyHabitList((prev) => prev.filter(habit => habit._id !== id));
+      setWeeklyHabitList((prev) => prev.filter(habit => habit._id !== id));
+      setMonthlyHabitList((prev) => prev.filter(habit => habit._id !== id));
+      console.log(`Delete habit with id: ${id} successfully!`);
+    } catch (error) {
+      console.error('Error deleting habit', error);
+    }
+  };
+
+  // hanlde edit habit
+  const handleEditHabit = async (e) => {
+    e.preventDefault();
+
+    const reqData = {
+      name,
+      description,
+      frequency,
+      targetCount
+    };
+
+    try {
+      const res = await axios.put(`http://localhost:3001/api/editHabit/${habitIdToEdit}`, reqData);
+      const updatedHabit = res.data.updatedHabit;
+      setDailyHabitList((prev) => {
+        return prev.map((habit) => {
+          return habit._id === updatedHabit._id ? updatedHabit : habit
+        })
+      });
+      setWeeklyHabitList((prev) => {
+        return prev.map((habit) => {
+          return habit._id === updatedHabit._id ? updatedHabit : habit
+        })
+      });
+      setMonthlyHabitList((prev) => {
+        return prev.map((habit) => {
+          return habit._id === updatedHabit._id ? updatedHabit : habit
+        })
+      });
+      console.log('Update habit successfully!', updatedHabit);
+    } catch (error) {
+      console.error('Error editing habit', error);
+    }
+    handleClose();
+  };
+
   return (
     <div className='habitpage-container p-2'>
+      {/* header contains add button */}
       <div className='habitpage-container-header d-flex justify-content-center align-items-center'>
-        <Button className='d-flex flex-row align-items-center justify-content-center mb-2' style={{gap: '8px'}}>
+        <Button
+          className='d-flex flex-row align-items-center justify-content-center mb-2'
+          style={{ gap: '8px' }}
+          onClick={handleShow}
+        >
           <FontAwesomeIcon icon={faPlus} />
           <div>Add Habit</div>
         </Button>
       </div>
+
+      {/* Modal with form inside */}
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Body>
+          <Form
+            onSubmit={habitIdToEdit ? handleEditHabit : handleAddHabit}
+            style={{ border: '1px solid black', padding: '10px', borderRadius: '10px' }}
+          >
+            <Row className='mb-3'>
+              {/* Habit name field */}
+              <Form.Group as={Col}>
+                <Form.Label><strong>Name:</strong></Form.Label>
+                <Form.Control
+                  required
+                  type='text'
+                  value={name}
+                  placeholder='Enter your habit name'
+                  onChange={(e) => setName(e.target.value)}
+                ></Form.Control>
+              </Form.Group>
+              {/* Habit description field */}
+              <Form.Group as={Col}>
+                <Form.Label><strong>Description:</strong></Form.Label>
+                <Form.Control
+                  type='text'
+                  value={description}
+                  placeholder='Enter your habit description'
+                  onChange={(e) => setDescription(e.target.value)}
+                ></Form.Control>
+              </Form.Group>
+            </Row>
+            <Row className='mb-3'>
+              {/* Habit frequency field */}
+              <Form.Group as={Col}>
+                <Form.Label><strong>Frequency:</strong></Form.Label>
+                <Dropdown onSelect={(eventKey) => setFrequency(eventKey)}>
+                  <Dropdown.Toggle variant="success" id="dropdown-basic">
+                    {frequency || 'Frequency'}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item eventKey={'daily'}>daily</Dropdown.Item>
+                    <Dropdown.Item eventKey={'weekly'}>weekly</Dropdown.Item>
+                    <Dropdown.Item eventKey={'monthly'}>monthly</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </Form.Group>
+              {/* Habit target count field */}
+              <Form.Group as={Col}>
+                <Form.Label><strong>Target count:</strong></Form.Label>
+                <Form.Control
+                  required
+                  type='number'
+                  value={targetCount}
+                  placeholder='Enter your target count'
+                  onChange={(e) => setTargetCount(e.target.value)}
+                ></Form.Control>
+              </Form.Group>
+            </Row>
+            {/* div contains submit btn for form */}
+            <div className='d-flex justify-content-center'>
+              <Button type='submit'>
+                {habitIdToEdit ? 'Update Habit' : 'Add Habit'}
+              </Button>
+            </div>
+          </Form>
+        </Modal.Body>
+      </Modal>
+
+      {/* Tab for showing habits by frequency */}
       <Tabs
         defaultActiveKey="weekly"
         id="justify-tab-example"
         className="mb-3"
         justify
       >
+        {/* Tab for daily */}
         <Tab eventKey="daily" title="Daily">
           <div className='daily-habit-list'>
             <ListGroup>
-              <Habit />
+              {dailyHabitList.map((dailyHabit) => (
+                <Habit
+                  key={dailyHabit._id}
+                  habit={dailyHabit}
+                  handleOpenEditModal={handleOpenEditModal}
+                  handleDeleteHabit={handleDeleteHabit}
+                />
+              ))}
             </ListGroup>
           </div>
         </Tab>
+        {/* Tab for weekly */}
         <Tab eventKey="weekly" title="Weekly">
           <div className='weekly-habit-list'>
             <ListGroup>
-              <Habit />
+              {weeklyHabitList.map((weeklyHabit) => (
+                <Habit
+                  key={weeklyHabit._id}
+                  habit={weeklyHabit}
+                  handleOpenEditModal={handleOpenEditModal}
+                  handleDeleteHabit={handleDeleteHabit}
+                />
+              ))}
             </ListGroup>
           </div>
         </Tab>
+        {/* Tab for monthly */}
         <Tab eventKey="monthly" title="Monthly">
           <div className='monthly-habit-list'>
             <ListGroup>
-              <Habit />
+              {monthlyHabitList.map((monthlyHabit) => (
+                <Habit
+                  key={monthlyHabit._id}
+                  habit={monthlyHabit}
+                  handleOpenEditModal={handleOpenEditModal}
+                  handleDeleteHabit={handleDeleteHabit}
+                />
+              ))}
             </ListGroup>
           </div>
         </Tab>

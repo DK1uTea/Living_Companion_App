@@ -19,6 +19,7 @@ export default function ConsumptionPage() {
   const [totalExpense, setTotalExpense] = useState(0.0);
   const [transactionIdToEdit, setTransactionIdToEdit] = useState(null);
 
+  // fetch transaction list by day
   const fetchTransactionByDay = async () => {
     const userID = getUserIdFromLocalStorage();
     if (!userID) return;
@@ -60,12 +61,14 @@ export default function ConsumptionPage() {
     setTotalExpense(total_expense);
   };
 
+  // handle selet other day
   const handleDateChange = (day) => {
     const formattedDate = format(day, "yyyy-MM-dd");
     setSelectedDate(formattedDate);
   };
 
   const handleShow = () => setShow(true); // handle show modal
+
   // handle close modal
   const handleClose = () => {
     setShow(false);
@@ -188,14 +191,17 @@ export default function ConsumptionPage() {
 
   return (
     <div className='consumptionpage-container p-2'>
+      {/* header contains calender component for selecting day */}
       <div className='consumption-header'>
         <CalendarComponent onDateChange={handleDateChange} />
       </div>
       <div className='consumption-main'>
         <div className='total-transactions d-flex flex-row justify-content-between align-items-center mb-3'>
+          {/* display total incomes of selected day */}
           <div className='total-incomes'>
             <strong style={{color: 'green'}}>Income: {formatNumber(totalIncome)}</strong>
           </div>
+          {/* add transaction btn just display when selected date is today */}
           {isToday(selectedDate) && (
             <Button
               className='d-flex flex-row justify-content-center align-items-center'
@@ -207,6 +213,7 @@ export default function ConsumptionPage() {
               Add Transaction
             </Button>
           )}
+          {/* display total expenses of selected day */}
           <div className='total-expenses'>
             <strong style={{color: 'red'}}>Expense: {formatNumber(totalExpense)}</strong>
           </div>
@@ -220,6 +227,7 @@ export default function ConsumptionPage() {
               style={{ border: '1px solid black', padding: '10px', borderRadius: '10px' }}
             >
               <Row className='mb-3'>
+                {/* Transaction type field */}
                 <Form.Group as={Col} >
                   <Form.Label><strong>Type:</strong></Form.Label>
                   <div className='d-flex flex-row justify-content-between'>
@@ -233,6 +241,7 @@ export default function ConsumptionPage() {
                     <Form.Label>Expense</Form.Label>
                   </div>
                 </Form.Group>
+                {/* Transaction category field */}
                 <Form.Group as={Col}>
                   <Form.Label><strong>Category:</strong></Form.Label>
                   <Dropdown onSelect={(eventKey) => setCategory(eventKey)}>
@@ -274,6 +283,7 @@ export default function ConsumptionPage() {
                 </Form.Group>
               </Row>
               <Row className='mb-3'>
+                {/* Transaction amount field */}
                 <Form.Group as={Col}>
                   <Form.Label><strong>Amount:</strong></Form.Label>
                   <Form.Control
@@ -284,6 +294,7 @@ export default function ConsumptionPage() {
                     onChange={(e) => setAmount(e.target.value)}
                   ></Form.Control>
                 </Form.Group>
+                {/* Transaction description field */}
                 <Form.Group as={Col}>
                   <Form.Label><strong>Description:</strong></Form.Label>
                   <Form.Control
@@ -294,13 +305,14 @@ export default function ConsumptionPage() {
                   ></Form.Control>
                 </Form.Group>
               </Row>
+              {/* div contains submit btn for form */}
               <div className='d-flex justify-content-center'>
                 <Button type='submit'>{transactionIdToEdit ? 'Update Transaction'  : 'Add Transaction'}</Button>
               </div>
             </Form>
           </Modal.Body>
         </Modal>
-
+        {/* div contains transaction list */}
         <div className='transaction-list d-flex justify-content-center'>
           {transactionList.length > 0 ? (
             <ListGroup style={{ width: '100%' }}>

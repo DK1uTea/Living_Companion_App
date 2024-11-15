@@ -116,6 +116,7 @@ export default function TodoPage() {
   };
 
   const handleShow = () => setShow(true); // handle show modal
+
   const handleClose = () => { // handle close modal
     setShow(false);
     setTaskIdToEdit(null);
@@ -154,6 +155,7 @@ export default function TodoPage() {
 
   return (
     <div>
+      {/* header contains title and add task btn */}
       <div
         className='d-flex flex-column align-items-center justify-content-center'
         style={{
@@ -175,7 +177,6 @@ export default function TodoPage() {
           Add Task
         </Button>
       </div>
-
       {/* Modal with the form inside */}
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
@@ -183,6 +184,7 @@ export default function TodoPage() {
             style={{ border: '1px solid black', padding: '10px', borderRadius: '10px' }}
           >
             <Row className='mb-3'>
+              {/* Task title field */}
               <Form.Group as={Col}>
                 <Form.Label><strong>Task title:</strong></Form.Label>
                 <Form.Control
@@ -193,6 +195,7 @@ export default function TodoPage() {
                   onChange={(e) => setTitle(e.target.value)}
                 ></Form.Control>
               </Form.Group>
+              {/* Task description field */}
               <Form.Group as={Col}>
                 <Form.Label><strong>Task description:</strong></Form.Label>
                 <Form.Control
@@ -204,6 +207,7 @@ export default function TodoPage() {
               </Form.Group>
             </Row>
             <Row className='mb-3'>
+              {/* Task duedate field */}
               <Form.Group as={Col}>
                 <Form.Label><strong>Due Date:</strong></Form.Label>
                 <Form.Control
@@ -212,13 +216,13 @@ export default function TodoPage() {
                   onChange={(e) => setDueDate(e.target.value)}
                 ></Form.Control>
               </Form.Group>
+              {/* Task priority field */}
               <Form.Group as={Col}>
                 <Form.Label><strong>Priority:</strong></Form.Label>
                 <Dropdown onSelect={(eventKey) => setPriority(eventKey)}>
                   <Dropdown.Toggle variant="success" id="dropdown-basic">
                     {priority || 'Choose priority'}
                   </Dropdown.Toggle>
-
                   <Dropdown.Menu>
                     <Dropdown.Item eventKey={'Low'}>Low</Dropdown.Item>
                     <Dropdown.Item eventKey={'Medium'}>Medium</Dropdown.Item>
@@ -227,13 +231,13 @@ export default function TodoPage() {
                 </Dropdown>
               </Form.Group>
             </Row>
+            {/* div contains submit btn */}
             <div className='d-flex justify-content-center'>
               <Button type='submit'>{taskIdToEdit ? 'Update Task' : 'Add Task'}</Button>
             </div>
           </Form>
         </Modal.Body>
       </Modal>
-
       {/* Display existing tasks */}
       <Container className='task-display mt-3 p-2' >
         <Row>

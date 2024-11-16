@@ -1,23 +1,79 @@
-import { faCheckToSlot, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faCheckToSlot, faCircleInfo, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import { ListGroup } from 'react-bootstrap'
 
-export default function Habit({ habit, handleOpenEditModal, handleDeleteHabit }) {
+export default function Habit({
+  habit,
+  handleOpenEditModal,
+  handleDeleteHabit,
+  handleShowCalendar,
+  handleMarkHabitAsCompleted
+}) {
+  
+  // calculate completed count based on frequency
+  const calculateCompletedCount = () => {
+    const today = new Date();
+    const formattedToday = today.toISOString().split('T')[0]; // Chuyển sang YYYY-MM-DD
+    const completedDates = habit.completedDates.map(date => new Date(date).toISOString().split('T')[0]); // Định dạng completedDates
+
+    let count = 0;
+
+    if (habit.frequency === 'daily') {
+      // Kiểm tra nếu ngày hôm nay nằm trong danh sách completedDates
+      count = completedDates.includes(formattedToday) ? 1 : 0;
+    } else if (habit.frequency === 'weekly') {
+      // Lấy start và end của tuần hiện tại
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - today.getDay()); // Chủ nhật đầu tuần
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6); // Thứ bảy cuối tuần
+
+      const formattedStartOfWeek = startOfWeek.toISOString().split('T')[0];
+      const formattedEndOfWeek = endOfWeek.toISOString().split('T')[0];
+
+      count = completedDates.filter(date => date >= formattedStartOfWeek && date <= formattedEndOfWeek).length;
+    } else if (habit.frequency === 'monthly') {
+      // Kiểm tra trong tháng hiện tại
+      const currentMonth = today.getMonth();
+      const currentYear = today.getFullYear();
+
+      count = completedDates.filter(date => {
+        const d = new Date(date);
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+      }).length;
+    }
+
+    return count;
+  };
+
+  const completedCount = calculateCompletedCount();
+
   return (
     <ListGroup.Item className='mb-2'>
       <div className='d-flex justify-content-between align-items-center'>
         {/* display some information field */}
         <div>
-          <div className='habit-item-name'><strong>{habit.name}</strong></div>
+          <div
+            className='habit-item-name d-flex justify-content-start align-items-center'
+            style={{ gap: '5px' }}
+          >
+            <strong>{habit.name}</strong>
+            {/* icon view details */}
+            <FontAwesomeIcon
+              icon={faCircleInfo}
+              style={{ color: "#B197FC", }}
+              onClick={() => handleShowCalendar(habit)}
+            />
+          </div>
           <div className='habit-item-frequency'>
-            {habit.frequency === 'daily' ? 'Today' : (habit.frequency === 'weekly' ? 'This week' : 'This month')}: 1 / {habit.targetCount}
+            {habit.frequency === 'daily' ? 'Today' : (habit.frequency === 'weekly' ? 'This week' : 'This month')}: {completedCount} / {habit.targetCount}
           </div>
         </div>
         {/* div contains some icon to click for updating, deleting, marking */}
-        <div 
+        <div
           className='habit-item-icon d-flex justify-content-center align-items-center'
-          style={{gap: '8px'}}
+          style={{ gap: '8px' }}
         >
           {/* icon edit */}
           <FontAwesomeIcon
@@ -27,14 +83,15 @@ export default function Habit({ habit, handleOpenEditModal, handleDeleteHabit })
           />
           {/* icon delete */}
           <FontAwesomeIcon
-            icon={faTrash} 
+            icon={faTrash}
             style={{ color: "#d10a0a", width: '18px', height: '18px' }}
             onClick={() => handleDeleteHabit(habit._id)}
           />
           {/* icon marking */}
-          <FontAwesomeIcon 
-            icon={faCheckToSlot} 
+          <FontAwesomeIcon
+            icon={faCheckToSlot}
             style={{ color: "#63e6be", width: '18px', height: '18px' }}
+            onClick={() => handleMarkHabitAsCompleted(habit)}
           />
         </div>
       </div>

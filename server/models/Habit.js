@@ -25,7 +25,7 @@ const habitSchema = new mongoose.Schema({
         default: 1,
     },
     completedDates: {
-        types: [Date], // Array of dates when the habit was completed
+        type: [Date], // Array of dates when the habit was completed
     },
     createdAt: {
         type: Date,

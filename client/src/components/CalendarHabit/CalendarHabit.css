@@ -1,0 +1,18 @@
+.completed-date {
+    background-color: #9500FF !important;
+    color: white !important;
+    border-radius: 50%;
+}
+
+.react-calendar {
+    border-radius: 10px;
+}
+
+.react-calendar__navigation {
+    background-color: #FFEBAD;
+    border-radius: 10px;
+}
+
+.react-calendar__month-view__weekdays {
+    border-bottom: 2px solid #21BCFF;
+}

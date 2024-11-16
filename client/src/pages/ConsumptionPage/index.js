@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import CalendarComponent from '../../components/CalendarComponent'
+import CalendarTransaction from '../../components/CalendarTransaction'
 import Transaction from '../../components/Transaction'
 import { Button, Col, Dropdown, Form, ListGroup, Modal, Row } from 'react-bootstrap';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
@@ -193,7 +193,7 @@ export default function ConsumptionPage() {
     <div className='consumptionpage-container p-2'>
       {/* header contains calender component for selecting day */}
       <div className='consumption-header'>
-        <CalendarComponent onDateChange={handleDateChange} />
+        <CalendarTransaction onDateChange={handleDateChange} />
       </div>
       <div className='consumption-main'>
         <div className='total-transactions d-flex flex-row justify-content-between align-items-center mb-3'>

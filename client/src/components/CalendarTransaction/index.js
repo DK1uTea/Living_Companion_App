@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { format, addDays, subDays, startOfWeek, endOfWeek } from "date-fns";
 import { Button } from 'react-bootstrap';
-import './CalendarComponent.css';
+import './CalendarTransaction.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretLeft, faCaretRight } from '@fortawesome/free-solid-svg-icons';
 
-export default function CalendarComponent({ onDateChange }) {
+export default function CalendarTransaction({ onDateChange }) {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [currentWeek, setCurrentWeek] = useState({
         start: startOfWeek(new Date(), { weekStartsOn: 1 }), // Bắt đầu từ thứ 2

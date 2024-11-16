@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Button, Col, Dropdown, Form, ListGroup, Modal, Row, Tab, Tabs } from 'react-bootstrap'
 import Habit from '../../components/Habit'
 import axios from 'axios'
+import CalendarHabit from '../../components/CalendarHabit'
 
 export default function HabitPage() {
   const [dailyHabitList, setDailyHabitList] = useState([]);
@@ -15,6 +16,8 @@ export default function HabitPage() {
   const [targetCount, setTargetCount] = useState(1);
   const [show, setShow] = useState(false);
   const [habitIdToEdit, setHabitIdToEdit] = useState(null);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [selectedHabit, setSelectedHabit] = useState(null);
 
   // fetch habit list follow by frequency from server
   const fetchHabit = async () => {
@@ -35,6 +38,12 @@ export default function HabitPage() {
   useEffect(() => {
     fetchHabit();
   }, []);
+
+  useEffect(() => {
+    if (frequency === 'daily') {
+      setTargetCount(1); // Cập nhật targetCount về 1 khi frequency là daily
+    }
+  }, [frequency]);
 
   // get useId from local storage
   const getUserIdFromLocalStorage = () => {
@@ -93,7 +102,7 @@ export default function HabitPage() {
     setName('');
     setDescription('');
     setFrequency('');
-    setTargetCount('');
+    setTargetCount(1);
     setHabitIdToEdit(null);
   };
 
@@ -156,6 +165,49 @@ export default function HabitPage() {
     handleClose();
   };
 
+  // handle show calendar
+  const handleShowCalendar = (habit) => {
+    setSelectedHabit(habit);
+    setShowCalendar(true);
+  };
+
+  // handle close calendar
+  const handleCloseCalendar = () => {
+    setSelectedHabit(null);
+    setShowCalendar(false);
+  };
+
+  // handle mark habit as completed
+  const handleMarkHabitAsCompleted = async (habit) => {
+    const today = new Date().toISOString().split('T')[0]; // Chỉ lấy phần ngày
+    console.log('Today:', today);
+
+    // Kiểm tra nếu ngày đã tồn tại trong danh sách
+    const completedDates = habit.completedDates.map(date => new Date(date).toISOString().split('T')[0]);
+    if (completedDates.includes(today)) {
+      alert('Habit has already been completed for today!');
+      return;
+    }
+
+    const reqData = {
+      date: today, // Gửi ngày dưới dạng YYYY-MM-DD
+    };
+
+    try {
+      const res = await axios.put(`http://localhost:3001/api/markHabitAsCompleted/${habit._id}`, reqData);
+      const updatedHabit = res.data.updatedHabit;
+
+      // Update habit lists
+      setDailyHabitList((prev) => prev.map(h => h._id === updatedHabit._id ? updatedHabit : h));
+      setWeeklyHabitList((prev) => prev.map(h => h._id === updatedHabit._id ? updatedHabit : h));
+      setMonthlyHabitList((prev) => prev.map(h => h._id === updatedHabit._id ? updatedHabit : h));
+
+      console.log('Habit has been marked as completed for today!');
+    } catch (error) {
+      console.error('Error marking habit', error);
+    }
+  };
+
   return (
     <div className='habitpage-container p-2'>
       {/* header contains add button */}
@@ -169,7 +221,6 @@ export default function HabitPage() {
           <div>Add Habit</div>
         </Button>
       </div>
-
       {/* Modal with form inside */}
       <Modal show={show} onHide={handleClose}>
         <Modal.Body>
@@ -220,11 +271,48 @@ export default function HabitPage() {
                 <Form.Label><strong>Target count:</strong></Form.Label>
                 <Form.Control
                   required
-                  type='number'
+                  type="number"
                   value={targetCount}
-                  placeholder='Enter your target count'
-                  onChange={(e) => setTargetCount(e.target.value)}
+                  placeholder="Enter your target count"
+                  disabled={frequency === 'daily'} // disable when frequency is 'daily'
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+
+                    // Xác định giới hạn dựa trên frequency
+                    let maxTarget = 1; // Default for daily
+                    if (frequency === 'weekly') {
+                      maxTarget = 7; // Weekly habits, max 7
+                    } else if (frequency === 'monthly') {
+                      // Lấy số ngày của tháng hiện tại
+                      const today = new Date();
+                      maxTarget = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate(); // Last day of current month
+                    }
+
+                    // Kiểm tra giá trị nhập vào không vượt quá maxTarget
+                    if (inputValue <= maxTarget) {
+                      setTargetCount(inputValue); // Chỉ cập nhật nếu hợp lệ
+                    }
+                  }}
+                  max={
+                    frequency === 'weekly' ? 7 :
+                      frequency === 'monthly' ? new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() : 1
+                  } // Thiết lập max giá trị
                 ></Form.Control>
+                {frequency === 'daily' && (
+                  <Form.Text className="text-muted">
+                    Target count is default 1 applicable for daily frequency.
+                  </Form.Text>
+                )}
+                {frequency === 'weekly' && (
+                  <Form.Text className="text-muted">
+                    Maximum target count for weekly frequency is 7.
+                  </Form.Text>
+                )}
+                {frequency === 'monthly' && (
+                  <Form.Text className="text-muted">
+                    Maximum target count for monthly frequency is the number of days in the current month.
+                  </Form.Text>
+                )}
               </Form.Group>
             </Row>
             {/* div contains submit btn for form */}
@@ -236,7 +324,12 @@ export default function HabitPage() {
           </Form>
         </Modal.Body>
       </Modal>
-
+      {/* Popup calender for viewing details habit */}
+      <CalendarHabit s
+        showCalendar={showCalendar}
+        handleCloseCalendar={handleCloseCalendar}
+        selectedHabit={selectedHabit}
+      />
       {/* Tab for showing habits by frequency */}
       <Tabs
         defaultActiveKey="weekly"
@@ -254,6 +347,8 @@ export default function HabitPage() {
                   habit={dailyHabit}
                   handleOpenEditModal={handleOpenEditModal}
                   handleDeleteHabit={handleDeleteHabit}
+                  handleShowCalendar={handleShowCalendar}
+                  handleMarkHabitAsCompleted={handleMarkHabitAsCompleted}
                 />
               ))}
             </ListGroup>
@@ -269,6 +364,8 @@ export default function HabitPage() {
                   habit={weeklyHabit}
                   handleOpenEditModal={handleOpenEditModal}
                   handleDeleteHabit={handleDeleteHabit}
+                  handleShowCalendar={handleShowCalendar}
+                  handleMarkHabitAsCompleted={handleMarkHabitAsCompleted}
                 />
               ))}
             </ListGroup>
@@ -284,6 +381,8 @@ export default function HabitPage() {
                   habit={monthlyHabit}
                   handleOpenEditModal={handleOpenEditModal}
                   handleDeleteHabit={handleDeleteHabit}
+                  handleShowCalendar={handleShowCalendar}
+                  handleMarkHabitAsCompleted={handleMarkHabitAsCompleted}
                 />
               ))}
             </ListGroup>

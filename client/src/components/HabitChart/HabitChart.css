@@ -1,4 +1,4 @@
-.todo-chart-container {
+.habit-chart-container {
     height: calc(100vh - 66px);
     display: flex;
     align-items: center;
@@ -8,11 +8,11 @@
 }
 
 @media (max-width: 480px){
-    .todo-chart-container {
+    .habit-chart-container {
         padding: 16px;
     }
 
-    .todo-chart-container canvas {
+    .habit-chart-container canvas {
         height: 35% !important;
     }
 }

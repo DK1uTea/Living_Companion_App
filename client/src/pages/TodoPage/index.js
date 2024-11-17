@@ -21,7 +21,7 @@ export default function TodoPage() {
 
     try {
       const res = await axios.get(`http://localhost:3001/api/getTasks/${userID}`);
-      setTodoList(res.data.reverse());
+      setTodoList(res.data.reverse() || []);
     } catch (error) {
       console.error(error);
     }
@@ -240,18 +240,22 @@ export default function TodoPage() {
       </Modal>
       {/* Display existing tasks */}
       <Container className='task-display mt-3 p-2' >
-        <Row>
-          {todoList.map((task) => (
-            <Col key={task._id} xs={12} sm={6} md={4} lg={3} className="mb-4">
-              <Task
-                task={task}
-                handleDeleteTask={handleDeleteTask}
-                handleOpenEditModal={handleOpenEditModal}
-                handleMarkTaskAsCompleted={handleMarkTaskAsCompleted}
-              />
-            </Col>
-          ))}
-        </Row>
+        {todoList.length > 0 ?
+          (<Row>
+            {todoList.map((task) => (
+              <Col key={task._id} xs={12} sm={6} md={4} lg={3} className="mb-4">
+                <Task
+                  task={task}
+                  handleDeleteTask={handleDeleteTask}
+                  handleOpenEditModal={handleOpenEditModal}
+                  handleMarkTaskAsCompleted={handleMarkTaskAsCompleted}
+                />
+              </Col>
+            ))}
+          </Row>)
+          :
+          (<div>No data for TODO list</div>)
+        }
       </Container>
     </div>
   )

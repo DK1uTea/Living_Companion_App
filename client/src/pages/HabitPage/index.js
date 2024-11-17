@@ -340,52 +340,64 @@ export default function HabitPage() {
         {/* Tab for daily */}
         <Tab eventKey="daily" title="Daily">
           <div className='daily-habit-list'>
-            <ListGroup>
-              {dailyHabitList.map((dailyHabit) => (
-                <Habit
-                  key={dailyHabit._id}
-                  habit={dailyHabit}
-                  handleOpenEditModal={handleOpenEditModal}
-                  handleDeleteHabit={handleDeleteHabit}
-                  handleShowCalendar={handleShowCalendar}
-                  handleMarkHabitAsCompleted={handleMarkHabitAsCompleted}
-                />
-              ))}
-            </ListGroup>
+            {dailyHabitList.length > 0 ?
+              (<ListGroup>
+                {dailyHabitList.map((dailyHabit) => (
+                  <Habit
+                    key={dailyHabit._id}
+                    habit={dailyHabit}
+                    handleOpenEditModal={handleOpenEditModal}
+                    handleDeleteHabit={handleDeleteHabit}
+                    handleShowCalendar={handleShowCalendar}
+                    handleMarkHabitAsCompleted={handleMarkHabitAsCompleted}
+                  />
+                ))}
+              </ListGroup>)
+              :
+              (<div>No data for daily habit!</div>)
+            }
           </div>
         </Tab>
         {/* Tab for weekly */}
         <Tab eventKey="weekly" title="Weekly">
           <div className='weekly-habit-list'>
-            <ListGroup>
-              {weeklyHabitList.map((weeklyHabit) => (
-                <Habit
-                  key={weeklyHabit._id}
-                  habit={weeklyHabit}
-                  handleOpenEditModal={handleOpenEditModal}
-                  handleDeleteHabit={handleDeleteHabit}
-                  handleShowCalendar={handleShowCalendar}
-                  handleMarkHabitAsCompleted={handleMarkHabitAsCompleted}
-                />
-              ))}
-            </ListGroup>
+            {weeklyHabitList.length > 0 ?
+              (<ListGroup>
+                {weeklyHabitList.map((weeklyHabit) => (
+                  <Habit
+                    key={weeklyHabit._id}
+                    habit={weeklyHabit}
+                    handleOpenEditModal={handleOpenEditModal}
+                    handleDeleteHabit={handleDeleteHabit}
+                    handleShowCalendar={handleShowCalendar}
+                    handleMarkHabitAsCompleted={handleMarkHabitAsCompleted}
+                  />
+                ))}
+              </ListGroup>)
+              :
+              (<div>No data for weekly habit!</div>)
+            }
           </div>
         </Tab>
         {/* Tab for monthly */}
         <Tab eventKey="monthly" title="Monthly">
           <div className='monthly-habit-list'>
-            <ListGroup>
-              {monthlyHabitList.map((monthlyHabit) => (
-                <Habit
-                  key={monthlyHabit._id}
-                  habit={monthlyHabit}
-                  handleOpenEditModal={handleOpenEditModal}
-                  handleDeleteHabit={handleDeleteHabit}
-                  handleShowCalendar={handleShowCalendar}
-                  handleMarkHabitAsCompleted={handleMarkHabitAsCompleted}
-                />
-              ))}
-            </ListGroup>
+            {monthlyHabitList.length > 0 ?
+              (<ListGroup>
+                {monthlyHabitList.map((monthlyHabit) => (
+                  <Habit
+                    key={monthlyHabit._id}
+                    habit={monthlyHabit}
+                    handleOpenEditModal={handleOpenEditModal}
+                    handleDeleteHabit={handleDeleteHabit}
+                    handleShowCalendar={handleShowCalendar}
+                    handleMarkHabitAsCompleted={handleMarkHabitAsCompleted}
+                  />
+                ))}
+              </ListGroup>)
+              :
+              (<div>No data for monthly habit!</div>)
+            }
           </div>
         </Tab>
       </Tabs>

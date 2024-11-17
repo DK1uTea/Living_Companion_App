@@ -1,6 +1,8 @@
 import React from 'react';
 import { Carousel } from 'react-bootstrap';
 import TaskChart from '../TaskChart';
+import HabitChart from '../HabitChart';
+import ConsumptionChart from '../ConsumptionChart';
 
 export default function Carousels_Feature() {
     return (
@@ -9,10 +11,10 @@ export default function Carousels_Feature() {
                 <TaskChart />           
             </Carousel.Item>
             <Carousel.Item interval={5000}>
-                <TaskChart />           
+                <HabitChart />         
             </Carousel.Item>
             <Carousel.Item interval={5000}>
-                <TaskChart />           
+                <ConsumptionChart />         
             </Carousel.Item>
         </Carousel>
     );

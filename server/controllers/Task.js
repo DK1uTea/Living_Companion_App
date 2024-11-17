@@ -147,7 +147,7 @@ export const getTaskCompletionStatistic = async (req, res) => {
             // Sort by day
             { $sort: { "_id.day": 1 } }
         ]);
-        console.log("Aggregated stats: ", stats); // Log the raw stats data
+        console.log("Aggregated task stats: ", stats); // Log the raw stats data
 
         // Check if stats is empty
         if (stats.length === 0) {
@@ -168,7 +168,7 @@ export const getTaskCompletionStatistic = async (req, res) => {
             return acc;
         }, {});
 
-        console.log("Formatted stats for chart: ", result); // Log the formatted data
+        console.log("Formatted task stats for chart: ", result); // Log the formatted data
         res.json(result);
     } catch (error) {
         console.error('Error getting task statistics: ', error);

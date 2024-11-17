@@ -10,7 +10,7 @@ export default function Habit({
   handleShowCalendar,
   handleMarkHabitAsCompleted
 }) {
-  
+
   // calculate completed count based on frequency
   const calculateCompletedCount = () => {
     const today = new Date();
@@ -23,14 +23,19 @@ export default function Habit({
       // Kiểm tra nếu ngày hôm nay nằm trong danh sách completedDates
       count = completedDates.includes(formattedToday) ? 1 : 0;
     } else if (habit.frequency === 'weekly') {
-      // Lấy start và end của tuần hiện tại
+      // Lấy start và end của tuần hiện tại (Thứ Hai đến Chủ Nhật)
       const startOfWeek = new Date(today);
-      startOfWeek.setDate(today.getDate() - today.getDay()); // Chủ nhật đầu tuần
+      const day = today.getDay(); // 0 (Chủ Nhật) -> 6 (Thứ Bảy)
+      const diffToMonday = day === 0 ? -6 : 1 - day; // Nếu Chủ Nhật thì lùi về Thứ Hai tuần trước, nếu khác thì tính khoảng cách đến Thứ Hai
+
+      startOfWeek.setDate(today.getDate() + diffToMonday); // Thiết lập đầu tuần là Thứ Hai
       const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6); // Thứ bảy cuối tuần
+      endOfWeek.setDate(startOfWeek.getDate() + 6); // Thêm 6 ngày để có Chủ Nhật cuối tuần
 
       const formattedStartOfWeek = startOfWeek.toISOString().split('T')[0];
       const formattedEndOfWeek = endOfWeek.toISOString().split('T')[0];
+      console.log('Start of week:', formattedStartOfWeek);
+      console.log('End of week:', formattedEndOfWeek);
 
       count = completedDates.filter(date => date >= formattedStartOfWeek && date <= formattedEndOfWeek).length;
     } else if (habit.frequency === 'monthly') {

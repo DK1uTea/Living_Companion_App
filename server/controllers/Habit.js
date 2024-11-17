@@ -1,4 +1,5 @@
-import Habit from '../models/Habit.js'
+import Habit from '../models/Habit.js';
+import { isSameDay, isSameWeek, isSameMonth, differenceInDays } from 'date-fns';
 
 export const addHabit = async (req, res) => {
     const { user, name, description, frequency, targetCount } = req.body;
@@ -112,5 +113,54 @@ export const markHabitAsCompleted = async (req, res) => {
     } catch (error) {
         console.error('Error marking habit as completed:', error);
         return res.status(500).json({ message: 'Error marking habit as completed!' });
+    }
+};
+
+export const getHabitCompletionStatistic = async (req, res) => {
+    const userID = req.params.userID;
+    console.log(userID);
+    try {
+        const habits = await Habit.find({ user: userID });
+        console.log('Found habit!');
+        if (!habits.length) {
+            return res.json([]);
+        }
+
+        const today = new Date(); // Ngày hiện tại
+        const stats = habits.map(habit => {
+            const { name, frequency, targetCount, completedDates, createdAt } = habit;
+
+            let completionRate = 0;
+            const completedCount = completedDates.filter(date => {
+                const completedDate = new Date(date);
+                if (frequency === 'daily') {
+                    return isSameDay(completedDate, today);
+                } else if (frequency === 'weekly') {
+                    return isSameWeek(completedDate, today, { weekStartsOn: 1 }); // Tuần bắt đầu từ thứ 2
+                } else if (frequency === 'monthly') {
+                    return isSameMonth(completedDate, today);
+                }
+            }).length;
+
+            if (frequency === 'daily') {
+                const daysElapsed = differenceInDays(today, new Date(createdAt)) + 1;
+                completionRate = (completedCount / daysElapsed) * 100;
+            } else if (frequency === 'weekly') {
+                completionRate = (completedCount / targetCount) * 100;
+            } else if (frequency === 'monthly') {
+                completionRate = (completedCount / targetCount) * 100;
+            }
+
+            return {
+                habitName: name,
+                frequency,
+                completionRate: Math.min(completionRate, 100), // Cố định tối đa là 100%
+            };
+        });
+        console.log('Habit stat data:', stats);
+        return res.json(stats);
+    } catch (error) {
+        console.error('Error calculating habit completion statistics: ', error);
+        res.status(500).send('Error retrieving habit completion statistics');
     }
 };

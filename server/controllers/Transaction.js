@@ -1,5 +1,6 @@
 import Transaction from "../models/Transaction.js";
 import mongoose from "mongoose";
+import { startOfMonth, endOfMonth } from 'date-fns';
 
 // add transaction to DB
 export const addTransaction = async (req, res) => {
@@ -46,7 +47,7 @@ export const getTransactionByDay = async (req, res) => {
 
         console.log(`Start day: ${utcStartOfDay}`);
         console.log(`End day: ${utcStartOfDay}`);
-        
+
         // Tìm các giao dịch của user trong ngày cụ thể
         const transactions = await Transaction.find({
             user: userID,
@@ -79,7 +80,7 @@ export const deleteTransaction = async (req, res) => {
 
     try {
         const deletedTransaction = await Transaction.findByIdAndDelete(transactionID);
-        if(!deleteTransaction) {
+        if (!deleteTransaction) {
             return res.status(404).send('Transaction not found!');
         }
         console.log(`Deleted Transaction found: ${deleteTransaction}`);
@@ -98,15 +99,79 @@ export const editTransaction = async (req, res) => {
         const updatedTransaction = await Transaction.findByIdAndUpdate(
             transactionID,
             { type, category, amount, description },
-            {new: true}
+            { new: true }
         );
-        if(!updatedTransaction){
+        if (!updatedTransaction) {
             return res.status(404).send('Transaction not found');
         }
         console.log(`Updated Transaction found: ${updatedTransaction}`);
-        return res.status(200).json({message: 'Update transaction successfully!', updatedTransaction});
+        return res.status(200).json({ message: 'Update transaction successfully!', updatedTransaction });
     } catch (error) {
         console.error('Error:', error);
         return res.status(500).send('Error updating transaction!');
+    }
+};
+
+export const getConsumptionStatistics = async (req, res) => {
+    const userID = req.params.userID;
+    console.log(userID);
+    try {
+        const currentYear = new Date().getFullYear();
+        const startYear = new Date(currentYear, 0, 1); // Ngày bắt đầu năm
+        const endYear = new Date(currentYear, 11, 31, 23, 59, 59); // Ngày kết thúc năm
+
+        // Tổng theo danh mục
+        const categoryStats = await Transaction.aggregate([
+            { $match: { user: new mongoose.Types.ObjectId(userID) } },
+            {
+                $group: {
+                    _id: { type: '$type', category: '$category' },
+                    totalAmount: { $sum: '$amount' },
+                },
+            },
+        ]);
+        console.log('Category Stat:', categoryStats);
+        // Tổng Income và Expense theo từng tháng
+        const monthlyStats = await Transaction.aggregate([
+            { $match: { user: new mongoose.Types.ObjectId(userID), createdAt: { $gte: startYear, $lte: endYear } } },
+            {
+                $group: {
+                    _id: {
+                        month: { $month: '$createdAt' },
+                        type: '$type',
+                    },
+                    totalAmount: { $sum: '$amount' },
+                },
+            },
+            { $sort: { '_id.month': 1 } },
+        ]);
+        console.log('Monthly stat: ', monthlyStats);
+        // Restructure dữ liệu
+        const categoryData = categoryStats.reduce((acc, curr) => {
+            const { type, category } = curr._id;
+            if (!acc[type]) acc[type] = {};
+            acc[type][category] = curr.totalAmount;
+            return acc;
+        }, {});
+
+        const monthlyData = Array.from({ length: 12 }, (_, i) => ({
+            month: i + 1,
+            income: 0,
+            expense: 0,
+        }));
+
+        monthlyStats.forEach(stat => {
+            const { month, type } = stat._id;
+            if (type === 'Income') {
+                monthlyData[month - 1].income = stat.totalAmount;
+            } else {
+                monthlyData[month - 1].expense = stat.totalAmount;
+            }
+        });
+
+        return res.json({ categoryData, monthlyData });
+    } catch (error) {
+        console.error('Error fetching consumption statistics:', error);
+        res.status(500).send('Error fetching consumption statistics');
     }
 };

@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle } from '@fortawesome/free-brands-svg-icons';
 import { auth, googleProvider, signInWithPopup } from '../../firebase/firebaseConfig.js';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function LoginAndRegister({ setIsAuth, setUser }) {
     const [isRightPanelActive, setIsRightPanelActive] = useState(false);
@@ -19,7 +20,7 @@ export default function LoginAndRegister({ setIsAuth, setUser }) {
     const handleOnSubmitRegister = async (e) => {
         e.preventDefault();
         if (confirmPassword !== passwordRegister) {
-            alert('Password do not match!');
+            toast.warning('Password do not match!');
             return;
         }
         const reqData = {
@@ -32,12 +33,12 @@ export default function LoginAndRegister({ setIsAuth, setUser }) {
             console.log('submit register!');
             console.log("Register successful!")
             setIsRightPanelActive(false);
-            alert('Registration successful!');
+            toast.success('Registration successful!');
         } catch (error) {
             if (error.response && error.response.status === 400) {
-                alert('Email already exists!');
+                toast.warning('Email already exists!');
             } else {
-                alert('Registration failed!');
+                toast.error('Registration failed!');
             }
             console.error("Error register: ", error);
         }
@@ -57,11 +58,13 @@ export default function LoginAndRegister({ setIsAuth, setUser }) {
             localStorage.setItem('user', JSON.stringify(res.data.user));
             setUser(res.data.user);
             setIsAuth(true);
+            toast.success('Login successfully!');
             navigate('/home-page');
+            toast(`✌️ Welcome ${res.data.user.username}!`);
             console.log('Login successfully!');
         } catch (error) {
             console.error('Error login: ', error);
-            alert('Login failed!');
+            toast.error('Login failed!');
         }
     };
 
@@ -85,10 +88,12 @@ export default function LoginAndRegister({ setIsAuth, setUser }) {
             localStorage.setItem('user', JSON.stringify(res.data.user));
             setUser(res.data.user);
             setIsAuth(true);
+            toast.success('Login successfully!');
             navigate('/home-page');
+            toast(`✌️ Welcome ${res.data.user.username}!`);
         } catch (error) {
             console.error('Error during Google sign-in:', error);
-            alert('Google login failed!');
+            toast.error('Google login failed!');
         }
     };
 

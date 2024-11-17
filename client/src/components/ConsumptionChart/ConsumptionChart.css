@@ -7,6 +7,10 @@
     padding: 32px;
 }
 
+.consumption-chart-container h3 {
+    margin: 0;
+}
+
 .chart-container-main {
     width: 100%;
     display: flex;
@@ -41,6 +45,10 @@
     .expense-chart, .income-chart {
         width: 70%;
     }
+
+    .consumption-chart-container h3 {
+        font-size: 18px;
+    }
 }
 
 @media (max-width: 380px){
@@ -50,5 +58,9 @@
 
     .consumption-chart-container h2 {
         display: none;
+    }
+
+    .consumption-chart-container h3 {
+        font-size: 18px;
     }
 }

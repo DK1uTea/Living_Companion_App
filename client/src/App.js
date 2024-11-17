@@ -12,6 +12,8 @@ import HabitPage from "./pages/HabitPage";
 import ConsumptionPage from "./pages/ConsumptionPage";
 import './App.css';
 import StatisticPage from "./pages/StatisticPage";
+import { Bounce, ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 
 function App() {
@@ -35,7 +37,7 @@ function App() {
           <div>
             <div className="top-bar">
               <div className="icon-open-menu">
-                <FontAwesomeIcon icon={faBars} onClick={() => {setIsCollapsed(!isCollapsed)}}/>
+                <FontAwesomeIcon icon={faBars} onClick={() => { setIsCollapsed(!isCollapsed) }} />
               </div>
               <div className="app-name-title mx-auto">
                 <strong>Living Companion App</strong>
@@ -68,6 +70,19 @@ function App() {
           </Routes>
         )
       }
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition={Bounce}
+      />
     </Router>
   );
 }

@@ -1,4 +1,4 @@
-import { faCheckToSlot, faCircleInfo, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faCalendarWeek, faCheckToSlot, faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import React from 'react'
 import { ListGroup } from 'react-bootstrap'
@@ -66,7 +66,7 @@ export default function Habit({
             <strong>{habit.name}</strong>
             {/* icon view details */}
             <FontAwesomeIcon
-              icon={faCircleInfo}
+              icon={faCalendarWeek}
               style={{ color: "#B197FC", }}
               onClick={() => handleShowCalendar(habit)}
             />

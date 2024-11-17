@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import Task from '../../components/Task';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 export default function TodoPage() {
   const [show, setShow] = useState(false);
@@ -61,11 +62,13 @@ export default function TodoPage() {
     try {
       const res = await axios.post('http://localhost:3001/api/addTask', reqData);
       console.log('Add task succesfully!');
+      toast.success(`Task ${res.data.task.title} has been added!`);
       setTodoList((prevTodoList) => {
         return [res.data.task, ...prevTodoList];
       });
     } catch (error) {
       console.error(error);
+      toast.error('Add task failed!');
     }
 
     // Close Modal
@@ -78,8 +81,10 @@ export default function TodoPage() {
       await axios.delete(`http://localhost:3001/api/deleteTask/${id}`);
       setTodoList(todoList.filter((task) => task._id !== id));
       console.log('Delete task successfully!');
+      toast.success(`Delete task successfully!`);
     } catch (error) {
       console.error(error);
+      toast.error('Delete task failed!')
     }
   };
 
@@ -107,9 +112,11 @@ export default function TodoPage() {
           task._id === updatedTask._id ? updatedTask : task
         )
       );
-      console.log('Updated task succesfully');
+      console.log('Update task successfully');
+      toast.success('Update task successfully!');
     } catch (error) {
       console.error(error);
+      toast.error('Update task failed!');
     }
 
     handleClose(); // clode modal
@@ -148,8 +155,10 @@ export default function TodoPage() {
         )
       );
       console.log('Task has been marked as completed!');
+      toast.success(`Task ${id} has been marked as completed!`);
     } catch (error) {
       console.error(error);
+      toast.error('Mark task as completed failed!');
     }
   }
 

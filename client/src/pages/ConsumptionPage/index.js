@@ -6,6 +6,8 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { format, isToday } from 'date-fns';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import './ConsumptionPage.css';
 
 export default function ConsumptionPage() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -123,13 +125,15 @@ export default function ConsumptionPage() {
 
     try {
       const res = await axios.post('http://localhost:3001/api/addTransaction', reqData);
-      console.log('Add transaction successfully');
       setTransactionList((prevTransaction) => {
         return [...prevTransaction, res.data.transaction];
       });
+      console.log('Add transaction successfully');
+      toast.success(`A ${res.data.transaction.type} transaction for ${res.data.transaction.category} has been added!`);
     } catch (error) {
       console.error("Error: ", error);
-      console.log('Failed to add transaction')
+      console.log('Failed to add transaction!')
+      toast.error('Failed to add transaction!');
     }
 
     // close modal
@@ -156,8 +160,10 @@ export default function ConsumptionPage() {
       await axios.delete(`http://localhost:3001/api/deleteTransaction/${id}`);
       setTransactionList(transactionList.filter((transaction) => transaction._id !== id));
       console.log('Delete transaction successfully!');
+      toast.success('Delete transaction successfully!');
     } catch (error) {
       console.error('Error:', error);
+      toast.error('Delete transaction failed!');
     }
   };
 
@@ -181,8 +187,10 @@ export default function ConsumptionPage() {
           transaction._id === updatedTransaction._id ? updatedTransaction : transaction)
       );
       console.log('Update transaction successfully');
+      toast.success('Update transaction successfully!');
     } catch (error) {
       console.error('Error:', error);
+      toast.error('Update transaction failed!');
     }
 
     // close modal after edit
@@ -210,7 +218,7 @@ export default function ConsumptionPage() {
             >
               <FontAwesomeIcon icon={faPlus} />
               {/* Add Transaction for {format(selectedDate, "yyyy-MM-dd").toString()} */}
-              Add Transaction
+              <div className='add-btn-text'>Add Transaction</div>
             </Button>
           )}
           {/* display total expenses of selected day */}

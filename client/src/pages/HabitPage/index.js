@@ -5,6 +5,7 @@ import { Button, Col, Dropdown, Form, ListGroup, Modal, Row, Tab, Tabs } from 'r
 import Habit from '../../components/Habit'
 import axios from 'axios'
 import CalendarHabit from '../../components/CalendarHabit'
+import { toast } from 'react-toastify'
 
 export default function HabitPage() {
   const [dailyHabitList, setDailyHabitList] = useState([]);
@@ -77,18 +78,22 @@ export default function HabitPage() {
         case 'daily':
           setDailyHabitList((prevHabit) => [...prevHabit, newHabit]);
           console.log(`Add new habit successfully`, newHabit);
+          toast.success(`Daily habit ${newHabit.name} has been added!`);
           break;
         case 'weekly':
           setWeeklyHabitList((prevHabit) => [...prevHabit, newHabit]);
           console.log(`Add new habit successfully`, newHabit);
+          toast.success(`Weekly habit ${newHabit.name} has been added!`);
           break;
         default:
           setMonthlyHabitList((prevHabit) => [...prevHabit, newHabit]);
           console.log(`Add new habit successfully`, newHabit);
+          toast.success(`Monthly habit ${newHabit.name} has been added!`);
           break;
       }
     } catch (error) {
       console.error('Error adding habit', error);
+      toast.error('Add habit failed!');
     }
     handleClose();
   };
@@ -124,8 +129,10 @@ export default function HabitPage() {
       setWeeklyHabitList((prev) => prev.filter(habit => habit._id !== id));
       setMonthlyHabitList((prev) => prev.filter(habit => habit._id !== id));
       console.log(`Delete habit with id: ${id} successfully!`);
+      toast.success('Delete habit successfully!');
     } catch (error) {
       console.error('Error deleting habit', error);
+      toast.error('Delete habit failed!');
     }
   };
 
@@ -159,8 +166,10 @@ export default function HabitPage() {
         })
       });
       console.log('Update habit successfully!', updatedHabit);
+      toast.success(`Habit ${updatedHabit.name} has been updated!`);
     } catch (error) {
       console.error('Error editing habit', error);
+      toast.error('Update habit failed!');
     }
     handleClose();
   };
@@ -185,7 +194,7 @@ export default function HabitPage() {
     // Kiểm tra nếu ngày đã tồn tại trong danh sách
     const completedDates = habit.completedDates.map(date => new Date(date).toISOString().split('T')[0]);
     if (completedDates.includes(today)) {
-      alert('Habit has already been completed for today!');
+      toast.info(`Habit ${habit.name} has already been completed for today!`);
       return;
     }
 
@@ -203,8 +212,10 @@ export default function HabitPage() {
       setMonthlyHabitList((prev) => prev.map(h => h._id === updatedHabit._id ? updatedHabit : h));
 
       console.log('Habit has been marked as completed for today!');
+      toast.success(`Habit ${habit.name} has been marked as completed for today!`);
     } catch (error) {
       console.error('Error marking habit', error);
+      toast.error('Error marking habit!');
     }
   };
 
